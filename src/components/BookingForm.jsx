@@ -42,7 +42,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
     initialValues: initialValues || {
       carId: selectedCar?.number || '',
       carDetails: selectedCar
-          ? `${selectedCar.name} -${selectedCar.number}- ${selectedCar.model} (${selectedCar.year}) - $${selectedCar.price}/day`
+          ? `${selectedCar.name} -${selectedCar.number}- ${selectedCar.model} (${selectedCar.year})`
           : '',
       customerId: '',
       startDate: format(new Date(), 'yyyy-MM-dd'),
@@ -52,6 +52,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
       status: 'pending',
       payAdvance: 0,
       totalAmount: 0,
+      pricePerDay:selectedCar.price,
       arrearsAmount: 0,
       carIsuue:true
     },

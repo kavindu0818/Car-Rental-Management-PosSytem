@@ -32,6 +32,14 @@ export const getBookings = createAsyncThunk(
     }
 );
 
+export const deleteBooking = createAsyncThunk("cars/deleteCar", async (bookingId, { rejectWithValue }) => {
+    try {
+        await api.delete(`/delete/${bookingId}`);
+        return bookingId;
+    } catch (err) {
+        return rejectWithValue(err.response?.data || "Error deleting booking");
+    }
+});
 // Initial state for bookings (example data or empty array)
 const initialState = {
   bookings: [],
@@ -109,7 +117,7 @@ const bookingSlice = createSlice({
 });
 
 // Export actions
-export const { addBookingLocal, updateBooking, deleteBooking, updateBookingStatus, updatePaymentStatus } = bookingSlice.actions;
+export const { addBookingLocal, updateBooking, updateBookingStatus, updatePaymentStatus } = bookingSlice.actions;
 
 // Export reducer
 export default bookingSlice.reducer;

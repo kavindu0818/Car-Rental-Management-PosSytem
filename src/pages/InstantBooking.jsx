@@ -1,140 +1,123 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { addBooking } from '../store/slices/bookingSlice.js';
-import { setCarAvailability } from '../store/slices/carsSlice.js';
-import { addCustomer } from '../store/slices/customersSlice.js';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { FiSearch, FiEdit, FiTrash2, FiActivity, FiBook } from 'react-icons/fi';
+import { deleteBooking, getBookings } from '../store/slices/bookingSlice.js';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const InstantBooking = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const bookings = useSelector(state => state.bookings.bookings || []);
+  const navigate = useNavigate(); // Initialize navigate function
 
-  // Ensure cars and customers default to empty arrays
-  const cars = useSelector((state) => state.cars?.carsList || []);
-  const customers = useSelector((state) => state.customers?.customersList || []);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const [step, setStep] = useState(1);
-  const [selectedCar, setSelectedCar] = useState(null);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [isNewCustomer, setIsNewCustomer] = useState(false);
-  const [newCustomer, setNewCustomer] = useState({ name: '', email: '', phone: '' });
-  const [bookingDetails, setBookingDetails] = useState({ startDate: '', endDate: '', totalAmount: 0 });
+  useEffect(() => {
+    dispatch(getBookings());
+  }, [dispatch]);
 
-  const handleSelectCar = (car) => setSelectedCar(car);
-  const handleSelectCustomer = (customer) => {
-    setSelectedCustomer(customer);
-    setIsNewCustomer(false);
+  const handleUpdate = (bookingId) => {
+    // Implement the update functionality here
+    console.log(`Update booking with ID: ${bookingId}`);
   };
 
-  const handleNewCustomerChange = (e) => {
-    setNewCustomer({ ...newCustomer, [e.target.name]: e.target.value });
+  const handleDelete = (bookingId) => {
+    dispatch(deleteBooking(bookingId));
+    console.log(`Delete booking with ID: ${bookingId}`);
   };
 
-  const handleBookingDetailsChange = (e) => {
-    setBookingDetails({ ...bookingDetails, [e.target.name]: e.target.value });
+  const handleSetBookingView = (bookingId, bookingDetails) => {
+    navigate('/current-booking', {
+      state: {
+        ...bookingDetails, // Pass the entire booking details as state
+        bookingId, // Include the bookingId
+      },
+    });
   };
 
-  const nextStep = () => {
-    if (step === 1 && !selectedCar) {
-      alert("Please select a car before proceeding.");
-      return;
-    }
-    if (step === 2 && !selectedCustomer && !isNewCustomer) {
-      alert("Please select a customer or add a new one.");
-      return;
-    }
-    setStep(step + 1);
-  };
+  const filteredBookings = bookings.filter(booking => {
+    const carDetails = booking.carDetails || '';
+    const customerId = booking.customerId || '';
 
-  const prevStep = () => setStep(step - 1);
+    return (
+        carDetails.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customerId.includes(searchTerm)
+    );
+  });
 
-  const handleSubmit = async () => {
-    let customerId = selectedCustomer?.id;
-    if (isNewCustomer) {
-      const newCustomerAction = await dispatch(addCustomer(newCustomer));
-      customerId = newCustomerAction.payload?.id;
-    }
-
-    if (!customerId) {
-      alert("Customer ID is missing.");
-      return;
-    }
-
-    const bookingData = {
-      carId: selectedCar.id,
-      customerId,
-      ...bookingDetails,
-      status: 'confirmed',
-    };
-
-    dispatch(addBooking(bookingData));
-    dispatch(setCarAvailability({ id: selectedCar.id, available: false }));
-    navigate('/bookings');
-  };
+  // Sort bookings by date (most recent first)
+  const sortedBookings = [...filteredBookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
-      <div className="container mx-auto p-4">
-        <h2 className="text-xl font-bold">Instant Booking</h2>
-
-        {step === 1 && (
-            <div>
-              <h3>Select a Car</h3>
-              {cars.length === 0 ? <p>Loading cars...</p> : (
-                  <div className="grid grid-cols-3 gap-4">
-                    {cars.map((car) => (
-                        <div key={car.id} className="border p-2 cursor-pointer" onClick={() => handleSelectCar(car)}>
-                          <img
-                              src={car.image || 'https://via.placeholder.com/300x200?text=Car+Image'}
-                              alt={car.name}
-                              className="w-full h-40 object-cover"
-                              onError={(e) => (e.target.src = 'https://via.placeholder.com/300x200?text=Car+Image')}
-                          />
-                          <p>{car.name}</p>
-                        </div>
-                    ))}
-                  </div>
-              )}
-            </div>
-        )}
-
-        {step === 2 && (
-            <div>
-              <h3>Select a Customer</h3>
-              <button onClick={() => setIsNewCustomer(true)}>New Customer</button>
-              {customers.length === 0 ? <p>Loading customers...</p> : (
-                  <div className="grid grid-cols-3 gap-4">
-                    {customers.map((customer) => (
-                        <div key={customer.id} className="border p-2 cursor-pointer" onClick={() => handleSelectCustomer(customer)}>
-                          <p>{customer.name}</p>
-                          <p>{customer.email}</p>
-                        </div>
-                    ))}
-                  </div>
-              )}
-              {isNewCustomer && (
-                  <div>
-                    <input type="text" name="name" placeholder="Name" onChange={handleNewCustomerChange} />
-                    <input type="email" name="email" placeholder="Email" onChange={handleNewCustomerChange} />
-                    <input type="tel" name="phone" placeholder="Phone" onChange={handleNewCustomerChange} />
-                  </div>
-              )}
-            </div>
-        )}
-
-        {step === 3 && (
-            <div>
-              <h3>Booking Details</h3>
-              <input type="date" name="startDate" onChange={handleBookingDetailsChange} />
-              <input type="date" name="endDate" onChange={handleBookingDetailsChange} />
-              <input type="number" name="totalAmount" placeholder="Total Amount" onChange={handleBookingDetailsChange} />
-            </div>
-        )}
-
-        <div className="flex gap-4 mt-4">
-          {step > 1 && <button onClick={prevStep}>Previous</button>}
-          {step < 3 && <button onClick={nextStep}>Next</button>}
-          {step === 3 && <button onClick={handleSubmit}>Confirm Booking</button>}
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900">Booking History</h1>
         </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+                type="text"
+                className="input pl-10"
+                placeholder="Search by vehicle details or customer ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {sortedBookings.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <p className="text-gray-500">No bookings found matching your criteria.</p>
+            </div>
+        ) : (
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                  <tr>
+                    {['Vehicle ID', 'Vehicle Details', 'Customer ID', 'Total Amount', 'Actions'].map((col) => (
+                        <th
+                            key={col}
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          {col}
+                        </th>
+                    ))}
+                  </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                  {sortedBookings.map((booking) => (
+                      <tr key={booking.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.carId || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{booking.carDetails || 'Unknown Car'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{booking.customerId || 'Unknown Customer'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{booking.totalAmount || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                              onClick={() => handleSetBookingView(booking.bookingId, booking)} // Pass booking details as argument
+                              className="text-red-600 hover:text-red-900"
+                          >
+                            <FiBook />
+                          </button>
+                          <button
+                              onClick={() => handleDelete(booking.bookingId)}
+                              className="text-red-600 hover:text-red-900"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </td>
+                      </tr>
+                  ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+        )}
       </div>
   );
 };

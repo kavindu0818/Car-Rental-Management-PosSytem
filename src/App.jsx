@@ -12,6 +12,7 @@ import Customers from './pages/Customers';
 import CustomerDetails from './pages/CustomerDetails';
 import InstantBooking from './pages/InstantBooking';
 import NotFound from './pages/NotFound';
+import CurruntBooking from "./pages/CurruntBooking.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="cars/edit" element={<EditCar />} />
             <Route path="bookings" element={<Bookings />} />
             <Route path="bookings/add/:id" element={<AddBooking />} />
+            <Route path="current-booking" element={<CurruntBooking />} />
             <Route path="booking-history" element={<BookingHistory />} />
             <Route path="customers" element={<Customers />} />
             <Route path="customers/:id" element={<CustomerDetails />} />

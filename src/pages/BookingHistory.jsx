@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { FiSearch, FiFilter, FiCalendar, FiUser, FiTruck } from 'react-icons/fi';
 
 const BookingHistory = () => {
-  const { bookings } = useSelector(state => state.bookings);
-  const { cars } = useSelector(state => state.cars);
-  const { customers } = useSelector(state => state.customers);
+  const { bookings = [] } = useSelector(state => state.bookings || { bookings: [] });
+  const { cars = [] } = useSelector(state => state.cars || { cars: [] });
+  const { customers = [] } = useSelector(state => state.customers || { customers: [] });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -13,6 +13,11 @@ const BookingHistory = () => {
   const [filterCar, setFilterCar] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
+
+  if (!Array.isArray(bookings)) {
+    console.error("bookings is not an array", bookings);
+    return <div>Error loading bookings</div>;
+  }
 
   const filteredBookings = bookings.filter(booking => {
     const car = cars.find(c => c.id === booking.carId);
@@ -24,20 +29,17 @@ const BookingHistory = () => {
     const matchesSearch =
         carName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        booking.id.includes(searchTerm);
+        (booking.id && booking.id.toString().includes(searchTerm));
 
-    const matchesStatus = filterStatus === '' || booking.status === filterStatus;
-    const matchesCustomer = filterCustomer === '' || booking.customerId === filterCustomer;
-    const matchesCar = filterCar === '' || booking.carId === filterCar;
-    const matchesStartDate =
-        filterStartDate === '' || new Date(booking.startDate) >= new Date(filterStartDate);
-    const matchesEndDate =
-        filterEndDate === '' || new Date(booking.endDate) <= new Date(filterEndDate);
+    const matchesStatus = !filterStatus || booking.status === filterStatus;
+    const matchesCustomer = !filterCustomer || booking.customerId === filterCustomer;
+    const matchesCar = !filterCar || booking.carId === filterCar;
+    const matchesStartDate = !filterStartDate || new Date(booking.startDate) >= new Date(filterStartDate);
+    const matchesEndDate = !filterEndDate || new Date(booking.endDate) <= new Date(filterEndDate);
 
     return matchesSearch && matchesStatus && matchesCustomer && matchesCar && matchesStartDate && matchesEndDate;
   });
 
-  // Sort bookings by date (most recent first)
   const sortedBookings = [...filteredBookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
@@ -78,9 +80,7 @@ const BookingHistory = () => {
               <select className="input" value={filterCustomer} onChange={(e) => setFilterCustomer(e.target.value)}>
                 <option value="">All Customers</option>
                 {customers.map(customer => (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.name}
-                    </option>
+                    <option key={customer.id} value={customer.id}>{customer.name}</option>
                 ))}
               </select>
             </div>
@@ -90,9 +90,7 @@ const BookingHistory = () => {
               <select className="input" value={filterCar} onChange={(e) => setFilterCar(e.target.value)}>
                 <option value="">All Cars</option>
                 {cars.map(car => (
-                    <option key={car.id} value={car.id}>
-                      {car.name} {car.model}
-                    </option>
+                    <option key={car.id} value={car.id}>{car.name} {car.model}</option>
                 ))}
               </select>
             </div>
@@ -131,18 +129,15 @@ const BookingHistory = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                   <tr>
-                    {['Booking ID', 'Customer', 'Car', 'Dates', 'Amount', 'Status', 'Payment', 'Created At'].map((col) => (
-                        <th
-                            key={col}
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
+                    {['Booking ID', 'Customer', 'Car', 'Dates', 'Amount', 'Status', 'Payment', 'Created At'].map((col, index) => (
+                        <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {col}
                         </th>
                     ))}
                   </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                  {sortedBookings.map(booking => {
+                  {sortedBookings.map((booking) => {
                     const car = cars.find(c => c.id === booking.carId);
                     const customer = customers.find(c => c.id === booking.customerId);
 
