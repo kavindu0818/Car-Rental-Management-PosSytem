@@ -8,7 +8,7 @@ const CustomerForm = ({ onSubmit, initialValues = null }) => {
     email: Yup.string().email("Invalid email address").required("Email is required"),
     phone: Yup.string().required("Phone number is required"),
     address: Yup.string().required("Address is required"),
-    licenseNumber: Yup.string().required("License number is required"),
+    license: Yup.string().required("License number is required"),
   });
 
   const formik = useFormik({
@@ -17,10 +17,12 @@ const CustomerForm = ({ onSubmit, initialValues = null }) => {
       email: "",
       phone: "",
       address: "",
-      licenseNumber: "",
+      license: "",
     },
     validationSchema,
+
     onSubmit: (values) => {
+      console.log("customer form data",values);
       onSubmit(values);
     },
   });
@@ -83,22 +85,23 @@ const CustomerForm = ({ onSubmit, initialValues = null }) => {
           </div>
 
           <div className="sm:col-span-3">
-            <label htmlFor="licenseNumber" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="license" className="block text-sm font-medium text-gray-700">
               Driver's License Number
             </label>
             <input
                 type="text"
-                name="licenseNumber"
-                id="licenseNumber"
+                name="license" // ✅ Change from "licenseNumber" to "license"
+                id="license"
                 className="input"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.licenseNumber}
+                value={formik.values.license}
             />
-            {formik.touched.licenseNumber && formik.errors.licenseNumber && (
-                <p className="mt-2 text-sm text-red-600">{formik.errors.licenseNumber}</p>
+            {formik.touched.license && formik.errors.license && (
+                <p className="mt-2 text-sm text-red-600">{formik.errors.license}</p>
             )}
           </div>
+
 
           <div className="sm:col-span-6">
             <label htmlFor="address" className="block text-sm font-medium text-gray-700">

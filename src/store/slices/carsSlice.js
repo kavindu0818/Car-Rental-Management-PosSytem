@@ -117,7 +117,13 @@ const carsSlice = createSlice({
         .addCase(deleteCars.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload;
-        });
+        })
+
+  // .addCase(deleteCars.fulfilled, (state, action) => {
+  //         state.loading = false;
+  //         state.cars = state.cars.filter((car) => car.id !== action.payload);
+  //     });
+
   },
 });
 

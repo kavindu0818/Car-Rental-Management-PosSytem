@@ -41,7 +41,7 @@ const BookingPage = () => {
                         <div key={car.id} className="border rounded-lg shadow p-4">
                             <CarCard car={car} />
                             <Link
-                                to={`/book/${car.id}`}
+                                to={`/bookings/add/${car.id}`}
                                 className="mt-4 block text-center bg-blue-500 text-white py-2 rounded"
                             >
                                 Book Vehicle

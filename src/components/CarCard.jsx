@@ -28,7 +28,7 @@ const CarCard = ({ car, onDelete }) => {
           </div>
 
           <div className="mt-4">
-            <p className="text-gray-700">Type: {car.type}</p>
+            <p className="text-gray-700">Type: {car.number}</p>
             <p className="text-lg font-bold text-primary-600 mt-2">${car.price}/day</p>
           </div>
 
@@ -41,7 +41,7 @@ const CarCard = ({ car, onDelete }) => {
               Edit
             </Link>
             <button
-                onClick={() => onDelete(car.id)}
+                onClick={() => onDelete(car.number)}
                 className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200"
             >
               <FiTrash2 className="mr-1 h-4 w-4" />

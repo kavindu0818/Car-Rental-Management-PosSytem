@@ -7,7 +7,7 @@ import { getCars, deleteCars } from "../store/slices/carsSlice";
 
 const Cars = () => {
     const dispatch = useDispatch();
-    const { cars, loading, error } = useSelector((state) => state.cars);
+    const { cars, loading, error } = useSelector((state) => state.cars || { cars: [] }); // Ensure state is not undefined
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
@@ -15,13 +15,14 @@ const Cars = () => {
     }, [dispatch]);
 
     const handleDelete = (id) => {
+        console.log("Deleting car with ID:", id);
         dispatch(deleteCars(id));
     };
 
-    // Filter cars based on search
-    const filteredCars = cars.filter((car) =>
-        car.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Ensure `cars` is an array before filtering
+    const filteredCars = Array.isArray(cars) ? cars.filter((car) =>
+        car.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [];
 
     return (
         <div className="p-6">
@@ -61,7 +62,7 @@ const Cars = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredCars.length > 0 ? (
                         filteredCars.map((car) => (
-                            <CarCard key={car.id} car={car} onDelete={() => handleDelete(car.id)} />
+                            <CarCard key={car.number} car={car} onDelete={() => handleDelete(car.number)} />
                         ))
                     ) : (
                         <p className="text-center text-gray-500">No cars found.</p>

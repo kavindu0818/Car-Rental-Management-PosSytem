@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiSearch, FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
-import { deleteCustomer } from '../store/slices/customersSlice';
+import {deleteCustomer, getCustomers, saveCustomer} from '../store/slices/customersSlice';
 import CustomerForm from '../components/CustomerForm';
 
 const Customers = () => {
   const dispatch = useDispatch();
   const { customers } = useSelector(state => state.customers);
   const { bookings } = useSelector(state => state.bookings);
+
+  const [carData] = useState({
+    name: '',
+    email:'',
+    phone:'',
+    license:'',
+    address: '',// Default to true
+  });
+
+  useEffect(() => {
+    dispatch(getCustomers());
+  }, [customers]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddCustomer, setShowAddCustomer] = useState(false);
@@ -27,7 +39,7 @@ const Customers = () => {
   };
 
   const handleAddCustomer = (values) => {
-    dispatch({ type: 'customers/addCustomer', payload: values });
+    dispatch(saveCustomer(values));
     setShowAddCustomer(false);
   };
 
@@ -130,7 +142,7 @@ const Customers = () => {
                           <div className="text-sm text-gray-900">{customer.email}</div>
                           <div className="text-sm text-gray-500">{customer.phone}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.licenseNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.license}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.address}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{customerBookings.length} total</div>
