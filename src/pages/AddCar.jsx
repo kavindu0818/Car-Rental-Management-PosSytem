@@ -9,7 +9,8 @@ const AddCar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [carData] = useState({
+    // Initialize carData with default values
+    const [carData, setCarData] = useState({
         number: '',
         name: '',
         model: '',

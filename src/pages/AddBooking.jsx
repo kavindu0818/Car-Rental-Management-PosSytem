@@ -11,6 +11,7 @@ const AddBooking = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (values) => {
+      console.log("booking eka hari bn",values);
     dispatch(addBooking(values));
 
     // If the booking status is active, mark the car as unavailable

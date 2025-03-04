@@ -41,7 +41,8 @@ const BookingPage = () => {
                         <div key={car.id} className="border rounded-lg shadow p-4">
                             <CarCard car={car} />
                             <Link
-                                to={`/bookings/add/${car.id}`}
+                                to={`/bookings/add/${car.id}`} // Ensure `car.id` is provided in the URL
+                                state={{ selectedCar: car }} // Correct way to pass state in react-router-dom v6
                                 className="mt-4 block text-center bg-blue-500 text-white py-2 rounded"
                             >
                                 Book Vehicle

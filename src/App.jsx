@@ -21,9 +21,9 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="cars" element={<Cars />} />
             <Route path="cars/add" element={<AddCar />} />
-            <Route path="cars/edit/:id" element={<EditCar />} />
+            <Route path="cars/edit" element={<EditCar />} />
             <Route path="bookings" element={<Bookings />} />
-            <Route path="bookings/add" element={<AddBooking />} />
+            <Route path="bookings/add/:id" element={<AddBooking />} />
             <Route path="booking-history" element={<BookingHistory />} />
             <Route path="customers" element={<Customers />} />
             <Route path="customers/:id" element={<CustomerDetails />} />
