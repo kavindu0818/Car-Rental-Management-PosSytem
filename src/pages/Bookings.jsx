@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'; // Import useDispatch
 import { Link } from 'react-router-dom';
 import { FiSearch, FiFilter } from 'react-icons/fi';
 import CarCard from '../components/CarCard';
+import { getCars } from '../store/slices/carsSlice.js';
 
 const BookingPage = () => {
+    const dispatch = useDispatch(); // Initialize dispatch
     const cars = useSelector(state => state.cars.cars);
     const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        dispatch(getCars()); // Fetch cars on component mount
+    }, [dispatch]); // Include dispatch in the dependency array
 
     // Filter non-booked cars (assuming booked cars have `available: false`)
     const availableCars = cars.filter(car => car.available);
@@ -41,8 +47,8 @@ const BookingPage = () => {
                         <div key={car.id} className="border rounded-lg shadow p-4">
                             <CarCard car={car} />
                             <Link
-                                to={`/bookings/add/${car.id}`} // Ensure `car.id` is provided in the URL
-                                state={{ selectedCar: car }} // Correct way to pass state in react-router-dom v6
+                                to={`/bookings/add/${car.id}`}
+                                state={{ selectedCar: car }}
                                 className="mt-4 block text-center bg-blue-500 text-white py-2 rounded"
                             >
                                 Book Vehicle

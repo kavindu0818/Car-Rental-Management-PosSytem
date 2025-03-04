@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import BookingForm from '../components/BookingForm';
-import { addBooking } from '../store/slices/bookingsSlice';
+import { addBooking } from '../store/slices/bookingSlice.js';
 import { setCarAvailability } from '../store/slices/carsSlice';
 
 const AddBooking = () => {
@@ -11,7 +11,7 @@ const AddBooking = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (values) => {
-      console.log("booking eka hari bn",values);
+      console.log("booking eka hari bn 12345",values);
     dispatch(addBooking(values));
 
     // If the booking status is active, mark the car as unavailable

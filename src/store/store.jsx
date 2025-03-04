@@ -1,8 +1,11 @@
 import carsSlice from "./slices/carsSlice.js";
+import customersSlice from "./slices/customersSlice.js";
 
 export const store = configureStore({
     reducer: {
-       cars:carsSlice
+       cars:carsSlice,
+        customers: customersSlice
+        booking: bookingS
     },
 });
 

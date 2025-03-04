@@ -53,6 +53,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
       payAdvance: 0,
       totalAmount: 0,
       arrearsAmount: 0,
+      carIsuue:true
     },
     validationSchema,
     onSubmit: (values) => {
@@ -85,6 +86,12 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
       }
     }
   }, [formik.values.carId, formik.values.startDate, formik.values.endDate, cars]);
+
+  useEffect(() => {
+    const arrears = formik.values.totalAmount - formik.values.payAdvance;
+    formik.setFieldValue('arrearsAmount', arrears);
+  }, [formik.values.payAdvance, formik.values.totalAmount]);
+
 
   return (
       <form onSubmit={formik.handleSubmit} className="space-y-6">

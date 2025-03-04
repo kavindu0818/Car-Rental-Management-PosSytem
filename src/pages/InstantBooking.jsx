@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { addBooking } from '../store/slices/bookingsSlice.js';
+import { addBooking } from '../store/slices/bookingSlice.js';
 import { setCarAvailability } from '../store/slices/carsSlice.js';
 import { addCustomer } from '../store/slices/customersSlice.js';
 

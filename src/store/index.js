@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import carsReducer from './slices/carsSlice';
-import bookingsReducer from './slices/bookingsSlice';
+import bookingsReducer from './slices/bookingSlice.js';
 import customersReducer from './slices/customersSlice';
 import dashboardReducer from './slices/dashboardSlice';
 
