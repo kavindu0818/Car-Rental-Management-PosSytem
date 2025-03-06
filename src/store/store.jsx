@@ -3,8 +3,8 @@ import customersSlice from "./slices/customersSlice.js";
 
 export const store = configureStore({
     reducer: {
-       cars:carsSlice,
-        customers: customersSlice
+        cars:carsSlice,
+        customers: customersSlice,
         booking: bookingS
     },
 });
@@ -12,4 +12,3 @@ export const store = configureStore({
 
 // export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-

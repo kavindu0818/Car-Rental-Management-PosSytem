@@ -47,6 +47,7 @@ const InstantBooking = () => {
   // Sort bookings by date (most recent first)
   const sortedBookings = [...filteredBookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+  console.log(bookings)
   return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">

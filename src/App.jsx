@@ -15,26 +15,26 @@ import NotFound from './pages/NotFound';
 import CurruntBooking from "./pages/CurruntBooking.jsx";
 
 function App() {
-  return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="cars" element={<Cars />} />
-            <Route path="cars/add" element={<AddCar />} />
-            <Route path="cars/edit" element={<EditCar />} />
-            <Route path="bookings" element={<Bookings />} />
-            <Route path="bookings/add/:id" element={<AddBooking />} />
-            <Route path="current-booking" element={<CurruntBooking />} />
-            <Route path="booking-history" element={<BookingHistory />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="customers/:id" element={<CustomerDetails />} />
-            <Route path="instant-booking" element={<InstantBooking />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </Router>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="cars" element={<Cars />} />
+                    <Route path="cars/add" element={<AddCar />} />
+                    <Route path="cars/edit" element={<EditCar />} />
+                    <Route path="bookings" element={<Bookings />} />
+                    <Route path="bookings/add/:id" element={<AddBooking />} />
+                    <Route path="current-booking" element={<CurruntBooking />} />
+                    <Route path="booking-history" element={<BookingHistory />} />
+                    <Route path="customers" element={<Customers />} />
+                    <Route path="customers/:id" element={<CustomerDetails />} />
+                    <Route path="instant-booking" element={<InstantBooking />} />
+                    <Route path="*" element={<NotFound />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
