@@ -49,7 +49,7 @@ const BookingPage = () => {
                             <Link
                                 to={`/bookings/add/${car.id}`}
                                 state={{ selectedCar: car }}
-                                className="mt-4 block text-center bg-blue-500 text-white py-2 rounded"
+                                className="mt-4 block text-center  text-black bg-transparent border-black hover:bg-blue-950 text-white  text-white py-2 rounded"
                             >
                                 Book Vehicle
                             </Link>

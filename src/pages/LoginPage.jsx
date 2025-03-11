@@ -49,7 +49,7 @@ export function Login() {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => navigate("/signup")}
+                                onClick={() => navigate("/signUp")} // Fixed navigation path
                                 className="bg-blue-950 border-white border-2 text-white py-2 px-4 rounded hover:bg-gray-500"
                             >
                                 Create Account

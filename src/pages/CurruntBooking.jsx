@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {deleteBooking} from "../store/slices/bookingSlice.js";
-
-// const deleteBooking = async (bookingId) => {
-//     return new Promise((resolve) => {
-//         setTimeout(() => {
-//             console.log(`Booking ${bookingId} deleted successfully.`);
-//             resolve();
-//         }, 1000);
-//     });
-// };
+import { deleteBooking, updateBooking } from "../store/slices/bookingSlice";
+import { addBookingHistory } from "../store/slices/bookingHistorySlice"; // Import the action
 
 const CurruntBooking = () => {
     const location = useLocation();
@@ -50,6 +42,38 @@ const CurruntBooking = () => {
         },
     });
 
+    const formikHistory = useFormik({
+        initialValues: {
+            bookingId: bookingData.bookingId || "",
+            statusUpdate: " booking Complete",
+            timestamp: new Date().toISOString(),
+            carId: bookingData.carId || "",
+            carDetails: bookingData.carDetails || "N/A",
+            customerId: bookingData.customerId || "",
+            startDate: bookingData.startDate || "",
+            endDate: bookingData.endDate || "",
+            paymentMethod: bookingData.paymentMethod || "card",
+            paymentStatus: bookingData.paymentStatus || "pending",
+            status: bookingData.status || "pending",
+            payAdvance: bookingData.payAdvance || 0,
+            totalAmount: bookingData.totalAmount || 0,
+            pricePerDay: bookingData.pricePerDay || "",
+            carIssue: bookingData.carIssue ?? true,
+            payArrears: "",
+
+        },
+        onSubmit: async (values) => {
+            try {
+                await dispatch(addBookingHistory(values)); // Dispatch the action to store booking in history
+                alert("Booking sent to history successfully!");
+                navigate("/booking-history");
+            } catch (error) {
+                console.error("Error sending booking to history:", error);
+                alert("Failed to send booking to history.");
+            }
+        },
+    });
+
     const handlePayArrears = () => {
         const payment = parseFloat(formik.values.payArrears) || 0;
         if (payment > 0 && payment <= arrears) {
@@ -61,9 +85,10 @@ const CurruntBooking = () => {
     const handleDeleteBooking = async () => {
         if (formik.values.carReceived && formik.values.paymentComplete) {
             try {
+                await formikHistory.handleSubmit();
                 await dispatch(deleteBooking(bookingData.bookingId)).unwrap();
                 alert("Booking deleted successfully!");
-                navigate("/instant-booking")
+                navigate("/instant-booking");
             } catch (error) {
                 console.error("Error deleting booking:", error);
                 alert("Failed to delete booking.");
@@ -72,6 +97,16 @@ const CurruntBooking = () => {
             alert("Booking cannot be deleted until all conditions are met.");
         }
     };
+
+    // const handleSendToHistory = async () => {
+    //     if (!formik.values.carReceived || !formik.values.paymentComplete) {
+    //         alert("Complete the booking process before sending it to history.");
+    //         return;
+    //     }
+    //
+    //     // Trigger form submission to send booking to history
+    //     await formikHistory.handleSubmit();
+    // };
 
     const calculateTotalDays = () => {
         if (!formik.values.startDate || !formik.values.endDate) return 0;
