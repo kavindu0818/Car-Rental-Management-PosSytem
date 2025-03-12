@@ -20,6 +20,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Calculate dashboard statistics
     const totalCars = cars.length;
+    const totalBooking = bookings.length;
     const availableCars = cars.filter(car => car.available).length;
     const activeBookings = bookings.filter(booking => booking.status === 'active').length;
     const totalRevenue = bookings.reduce((sum, booking) => sum + booking.totalAmount, 0);
@@ -58,6 +59,7 @@ const Dashboard = () => {
         .slice(0, 3);
 
     dispatch(setDashboardStats({
+      totalBooking,
       totalCars,
       availableCars,
       activeBookings,
@@ -119,7 +121,7 @@ const Dashboard = () => {
           />
           <StatCard
               title="Active Bookings"
-              value={stats.activeBookings}
+              value={stats.totalBooking}
               icon={FiCalendar}
               change="12%"
               changeType="increase"
@@ -151,13 +153,13 @@ const Dashboard = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Popular Cars</h2>
             <div className="space-y-4">
-              {stats.popularCars?.map(({ car, bookingCount }) => (
-                  car && (
-                      <div key={car.id} className="flex items-center">
+              {stats.popularCars?.map(({ cars, bookingCount }) => (
+                  cars && (
+                      <div key={cars.number} className="flex items-center">
                         <div className="flex-shrink-0 h-12 w-12 rounded-md overflow-hidden">
                           <img
-                              src={car.image}
-                              alt={car.name}
+                              src={cars.image}
+                              alt={cars.name}
                               className="h-full w-full object-cover"
                               onError={(e) => {
                                 e.target.onerror = null;
@@ -166,8 +168,8 @@ const Dashboard = () => {
                           />
                         </div>
                         <div className="ml-4 flex-1">
-                          <h3 className="text-sm font-medium text-gray-900">{car.name} {car.model}</h3>
-                          <p className="text-sm text-gray-500">{car.year} • ${car.price}/day</p>
+                          <h3 className="text-sm font-medium text-gray-900">{cars.name} {cars.model}</h3>
+                          <p className="text-sm text-gray-500">{cars.year} • ${cars.price}/day</p>
                         </div>
                         <div className="flex-shrink-0 bg-primary-100 text-primary-800 text-xs font-medium px-2 py-1 rounded-full">
                           {bookingCount} bookings
@@ -206,14 +208,14 @@ const Dashboard = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
               {stats.recentBookings?.map(booking => {
-                const car = cars.find(c => c.id === booking.carId);
-                const customer = customers.find(c => c.id === booking.customerId);
+                const car = cars.find(c => c.number === booking.carId);
+                const customer = customers.find(c => c.phone === booking.customerId);
 
                 return (
                     <tr key={booking.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {customer?.name || 'Unknown Customer'}
+                          {booking.customerId || 'Unknown Customer'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

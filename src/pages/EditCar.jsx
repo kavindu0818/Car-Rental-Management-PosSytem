@@ -1,61 +1,144 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi';
-import CarForm from '../components/CarForm';
-import { updateCar } from '../store/slices/carsSlice';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
-const EditCar = () => {
-  const { id } = useParams();
-  const carId = Number(id);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [car, setCar] = useState(null);
-  const cars = useSelector(state => state.cars.cars);
+const api = axios.create({
+  baseURL: 'http://localhost:8080/api/car', // Ensure your endpoint is correct
+});
 
-  console.log("Edit Page - Car ID:", carId);
-  console.log("Available Cars:", cars); // Debugging
-
-  useEffect(() => {
-    if (isNaN(carId)) {
-      navigate('/cars'); // Redirect if id is invalid
-      return;
-    }
-
-    if (cars.length > 0) {
-      const foundCar = cars.find(car => Number(car.number) === carId);
-      console.log("Found Car:", foundCar); // Debugging
-      if (foundCar) {
-        setCar(foundCar);
-      } else {
-        navigate('/cars');
+export const saveCar = createAsyncThunk(
+    "cars/saveCar",
+    async (car, { rejectWithValue }) => {
+      try {
+        const response = await api.post("/add", car);
+        return response.data;
+      } catch (err) {
+        return rejectWithValue(err.response?.data || "Error saving car");
       }
     }
-  }, [carId, cars, navigate]);
+);
 
-  const handleSubmit = (values) => {
-    dispatch(updateCar(values));
-    navigate('/cars');
-  };
-
-  if (!car) {
-    return <div>Loading...</div>;
+export const getCars = createAsyncThunk("cars/getCars", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get("/");
+    return response.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || "Error fetching cars");
   }
+});
 
-  return (
-      <div className="space-y-6">
-        <div className="flex items-center">
-          <button onClick={() => navigate(-1)} className="mr-4 text-gray-500 hover:text-gray-700">
-            <FiArrowLeft className="h-5 w-5" />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900">Edit Car</h1>
-        </div>
+export const updateCar = createAsyncThunk(
+    "cars/updateCar",
+    async (car, { rejectWithValue }) => {
+      try {
+        const response = await api.put(`/update/${car.id}`, car);
+        return response.data;
+      } catch (err) {
+        return rejectWithValue(err.response?.data || "Error updating car");
+      }
+    }
+);
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <CarForm onSubmit={handleSubmit} initialValues={car} />
-        </div>
-      </div>
-  );
-};
+export const deleteCars = createAsyncThunk("cars/deleteCar", async (carId, { rejectWithValue }) => {
+  try {
+    await api.delete(`/delete/${carId}`);
+    return carId;
+  } catch (err) {
+    return rejectWithValue(err.response?.data || "Error deleting car");
+  }
+});
 
-export default EditCar;
+// Define the setCarAvailability action
+export const setCarAvailability = createAsyncThunk(
+    "cars/setCarAvailability",
+    async ({ carId, available }, { rejectWithValue }) => {
+      try {
+        const response = await api.patch(`/update-availability/${carId}`, { available });
+        return response.data;
+      } catch (err) {
+        return rejectWithValue(err.response?.data || "Error setting car availability");
+      }
+    }
+);
+
+const carsSlice = createSlice({
+  name: "cars",
+  initialState: {
+    cars: [],
+    loading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+        .addCase(getCars.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(getCars.fulfilled, (state, action) => {
+          state.loading = false;
+          state.cars = action.payload;
+        })
+        .addCase(getCars.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+        .addCase(saveCar.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(saveCar.fulfilled, (state, action) => {
+          state.loading = false;
+          state.cars.push(action.payload);
+        })
+        .addCase(saveCar.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+        .addCase(updateCar.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(updateCar.fulfilled, (state, action) => {
+          state.loading = false;
+          const index = state.cars.findIndex((car) => car.id === action.payload.id);
+          if (index !== -1) {
+            state.cars[index] = action.payload;
+          }
+        })
+        .addCase(updateCar.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+        .addCase(deleteCars.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(deleteCars.fulfilled, (state, action) => {
+          state.loading = false;
+          state.cars = state.cars.filter((car) => car.id !== action.payload);
+        })
+        .addCase(deleteCars.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
+        .addCase(setCarAvailability.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(setCarAvailability.fulfilled, (state, action) => {
+          state.loading = false;
+          const updatedCar = action.payload;
+          const index = state.cars.findIndex((car) => car.id === updatedCar.id);
+          if (index !== -1) {
+            state.cars[index] = updatedCar;
+          }
+        })
+        .addCase(setCarAvailability.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        });
+  },
+});
+
+export default carsSlice.reducer;
+// Export the setCarAvailability action

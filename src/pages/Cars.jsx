@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiFilter } from "react-icons/fi";
 import CarCard from "../components/CarCard";
-import { getCars, deleteCars } from "../store/slices/carsSlice";
+import { getCars } from "../store/slices/carsSlice";
 
 const Cars = () => {
     const dispatch = useDispatch();

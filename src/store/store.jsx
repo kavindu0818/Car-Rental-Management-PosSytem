@@ -1,18 +1,18 @@
-import carsSlice from "./slices/carsSlice.js";
-import customersSlice from "./slices/customersSlice.js";
-import bookingSlice from "./slices/bookingSlice.js";
-import BookingHistorySlice from "./slices/BookingHistorySlice.js";
+import { configureStore } from "@reduxjs/toolkit";
+import carsSlice from "./slices/carsSlice";
+import customersSlice from "./slices/customersSlice";
+import bookingSlice from "./slices/bookingSlice";
+import bookingHistorySlice from "./slices/BookingHistorySlice";
+import userSlice from "./slices/UserSlice.js";
 
 export const store = configureStore({
     reducer: {
-        cars:carsSlice,
+        cars: carsSlice,
         customers: customersSlice,
         booking: bookingSlice,
-        bookingHistory:BookingHistorySlice
-
+        bookingsHistory: bookingHistorySlice,
+        user: userSlice,
     },
 });
 
-
-// export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

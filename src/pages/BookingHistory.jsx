@@ -1,85 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { FiSearch, FiFilter, FiCalendar, FiUser, FiTruck } from 'react-icons/fi';
-import { getBookingsHistory } from '../store/slices/BookingHistorySlice.js';
-import { getCars } from "../store/slices/carsSlice.js";
-import { getBookings } from "../store/slices/bookingSlice.js";
-import { getCustomers } from "../store/slices/customersSlice.js";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { FiSearch, FiTrash2, FiBook } from "react-icons/fi";
+import { deleteBookingHistory, getBookingsHistory } from "../store/slices/BookingHistorySlice";
+import { useNavigate } from "react-router-dom";
 
 const BookingHistory = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // Fetching data from Redux store
-  const { bookings = [] } = useSelector((state) => state.bookingHistory || { bookings: [] });
-  const { cars = [] } = useSelector((state) => state.cars || { cars: [] });
-  const { customers = [] } = useSelector((state) => state.customers || { customers: [] });
-  const { bookings: allBookings = [] } = useSelector((state) => state.bookings || { bookings: [] });
+  // Ensure `bookingsHistory` is always an array to prevent errors
+  const bookingsHistory = useSelector((state) => state.bookingsHistory?.bookingsHistory || []);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
-  const [filterCustomer, setFilterCustomer] = useState('');
-  const [filterCar, setFilterCar] = useState('');
-  const [filterStartDate, setFilterStartDate] = useState('');
-  const [filterEndDate, setFilterEndDate] = useState('');
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetching data when component mounts
   useEffect(() => {
     dispatch(getBookingsHistory());
-    dispatch(getBookings());
-    dispatch(getCars());
-    dispatch(getCustomers());
   }, [dispatch]);
 
-  // Logging fetched data for debugging
-  console.log("Booking History:", bookings);
-  console.log("Cars:", cars);
-  console.log("Customers:", customers);
+  console.log(bookingsHistory);
 
-  // Filter and sort the booking history based on selected filters
-  const filteredBookingHistory = Array.isArray(bookings) ? bookings.filter((historyBooking) => {
-    const booking = allBookings.find((b) => b.bookingId === historyBooking.bookingId);  // Check if bookingId exists in bookings array
-    const customer = customers.find((c) => c.phone === booking?.customerId);
-    const car = cars.find((c) => c.number === booking?.carId);
-
-    if (!booking) return false; // Skip if no booking is found
-
-    const carName = car ? `${car.name} ${car.model}` : '';
-    const customerName = customer ? customer.name : '';
-
-    const matchesSearch =
-        carName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (booking.bookingId && booking.bookingId.toString().includes(searchTerm));
-
-    const matchesStatus = !filterStatus || booking.status === filterStatus;
-    const matchesCustomer = !filterCustomer || booking.customerId.toString() === filterCustomer.toString();
-    const matchesCar = !filterCar || booking.carId.toString() === filterCar.toString();
-    const matchesStartDate = !filterStartDate || new Date(booking.startDate) >= new Date(filterStartDate);
-    const matchesEndDate = !filterEndDate || new Date(booking.endDate) <= new Date(filterEndDate);
-
-    return matchesSearch && matchesStatus && matchesCustomer && matchesCar && matchesStartDate && matchesEndDate;
-  }) : [];
-
-  const sortedBookings = [...filteredBookingHistory].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  // Modal handling
-  const openBookingDetails = (bookingId) => {
-    const bookingDetails = bookings.find((b) => b.bookingId === bookingId);
-    if (bookingDetails) {
-      const car = cars.find((c) => c.number === bookingDetails.carId);
-      const customer = customers.find((c) => c.phone === bookingDetails.customerId);
-      setSelectedBooking({
-        ...bookingDetails,
-        car: car ? `${car.name} ${car.model}` : 'Unknown Car',
-        customer: customer ? customer.name : 'Unknown Customer'
-      });
-    }
+  const handleDelete = (bookingId) => {
+    dispatch(deleteBookingHistory(bookingId));
   };
 
-  const closeModal = () => {
-    setSelectedBooking(null);
+  const handleSetBookingView = (bookingId, bookingDetails) => {
+    navigate("/current-booking", {
+      state: { ...bookingDetails, bookingId },
+    });
   };
+
+  const filteredBookings = bookingsHistory.filter((booking) =>
+      (booking.carId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (booking.customerId || "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const sortedBookings = [...filteredBookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
       <div className="space-y-6">
@@ -87,92 +42,56 @@ const BookingHistory = () => {
           <h1 className="text-2xl font-bold text-gray-900">Booking History</h1>
         </div>
 
-        {/* Filter section */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <FiSearch className="h-5 w-5 text-gray-400" />
+            </div>
             <input
                 type="text"
-                className="input"
-                placeholder="Search bookings..."
+                className="input pl-10"
+                placeholder="Search by vehicle or customer ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <select className="input" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-              <option value="">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-            <select className="input" value={filterCustomer} onChange={(e) => setFilterCustomer(e.target.value)}>
-              <option value="">All Customers</option>
-              {customers.map((customer) => (
-                  <option key={customer.phone} value={customer.phone}>
-                    {customer.name}
-                  </option>
-              ))}
-            </select>
           </div>
         </div>
 
-        {/* Booking Table */}
         {sortedBookings.length === 0 ? (
-            <p>No bookings found matching your criteria.</p>
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <p className="text-gray-500">No bookings found.</p>
+            </div>
         ) : (
-            <div className="overflow-x-auto">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead>
+                <thead className="bg-gray-50">
                 <tr>
-                  <th>Booking ID</th>
-                  <th>Customer</th>
-                  <th>Car</th>
-                  <th>Dates</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Payment</th>
-                  <th>Actions</th>
+                  {["Vehicle ID", "Vehicle Details", "Customer ID", "Total Amount", "Actions"].map((col) => (
+                      <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        {col}
+                      </th>
+                  ))}
                 </tr>
                 </thead>
-                <tbody>
-                {sortedBookings.map((booking) => {
-                  const car = cars.find((c) => c.number === booking.carId);
-                  const customer = customers.find((c) => c.phone === booking.customerId);
-
-                  return (
-                      <tr key={booking.bookingId}>
-                        <td>{booking.bookingId}</td>
-                        <td>{customer ? customer.name : 'Unknown Customer'}</td>
-                        <td>{car ? `${car.name} ${car.model}` : 'Unknown Car'}</td>
-                        <td>{booking.startDate} to {booking.endDate}</td>
-                        <td>${booking.totalAmount}</td>
-                        <td>{booking.status}</td>
-                        <td>{booking.paymentStatus}</td>
-                        <td>
-                          <button onClick={() => openBookingDetails(booking.bookingId)}>View</button>
-                        </td>
-                      </tr>
-                  );
-                })}
+                <tbody className="bg-white divide-y divide-gray-200">
+                {sortedBookings.map((booking) => (
+                    <tr key={booking.id}>
+                      <td className="px-6 py-4 text-sm">{booking.carId || "N/A"}</td>
+                      <td className="px-6 py-4 text-sm">{booking.carDetails || "Unknown Car"}</td>
+                      <td className="px-6 py-4 text-sm">{booking.customerId || "Unknown Customer"}</td>
+                      <td className="px-6 py-4 text-sm">{booking.totalAmount || "N/A"}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <button onClick={() => handleSetBookingView(booking.id, booking)} className="mr-2 text-blue-600">
+                          <FiBook />
+                        </button>
+                        <button onClick={() => handleDelete(booking.id)} className="text-red-600">
+                          <FiTrash2 />
+                        </button>
+                      </td>
+                    </tr>
+                ))}
                 </tbody>
               </table>
-            </div>
-        )}
-
-        {/* Booking Modal */}
-        {selectedBooking && (
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-                <h2 className="text-2xl font-bold">Booking Details</h2>
-                <p><strong>Booking ID:</strong> {selectedBooking.bookingId}</p>
-                <p><strong>Customer:</strong> {selectedBooking.customer}</p>
-                <p><strong>Car:</strong> {selectedBooking.car}</p>
-                <p><strong>Dates:</strong> {selectedBooking.startDate} to {selectedBooking.endDate}</p>
-                <p><strong>Amount:</strong> ${selectedBooking.totalAmount}</p>
-                <p><strong>Status:</strong> {selectedBooking.status}</p>
-                <p><strong>Payment Status:</strong> {selectedBooking.paymentStatus}</p>
-                <button onClick={closeModal}>Close</button>
-              </div>
             </div>
         )}
       </div>
