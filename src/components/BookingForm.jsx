@@ -6,6 +6,7 @@ import { format, addDays, differenceInDays } from 'date-fns';
 import { useLocation, useParams } from 'react-router-dom';
 import { getCustomers } from "../store/slices/customersSlice.js";
 import { getCars } from "../store/slices/carsSlice.js";
+import { getBookings } from "../store/slices/bookingSlice.js"; // Assuming you have a bookings slice
 
 const BookingForm = ({ onSubmit, initialValues = null }) => {
   const dispatch = useDispatch();
@@ -14,29 +15,11 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
   const selectedCar = location.state?.selectedCar;
   const [totalDays, setTotalDays] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [carBookings, setCarBookings] = useState([]);
 
   const cars = useSelector(state => state.cars.cars);
   const customers = useSelector(state => state.customers.customers);
-
-  useEffect(() => {
-    dispatch(getCustomers());
-    dispatch(getCars());
-  }, [dispatch]);
-
-  const availableCars = cars.filter(car => car.available);
-
-  // Form Validation Schema
-  const validationSchema = Yup.object({
-    carId: Yup.string().required('Car is required'),
-    customerId: Yup.string().required('Customer is required'),
-    startDate: Yup.date().required('Start date is required'),
-    endDate: Yup.date()
-        .required('End date is required')
-        .min(Yup.ref('startDate'), 'End date must be after start date'),
-    paymentMethod: Yup.string().required('Payment method is required'),
-    paymentStatus: Yup.string().required('Payment status is required'),
-    payAdvance: Yup.number().required('Advance payment is required').min(0, 'Advance payment cannot be negative'),
-  });
+  const bookings = useSelector(state => state.bookings.bookings); // Corrected to match the state
 
   const formik = useFormik({
     initialValues: initialValues || {
@@ -52,11 +35,21 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
       status: 'pending',
       payAdvance: 0,
       totalAmount: 0,
-      pricePerDay:selectedCar.price,
+      pricePerDay: selectedCar.price,
       arrearsAmount: 0,
-      carIsuue:true
+      carIssue: true
     },
-    validationSchema,
+    validationSchema: Yup.object({
+      carId: Yup.string().required('Car is required'),
+      customerId: Yup.string().required('Customer is required'),
+      startDate: Yup.date().required('Start date is required'),
+      endDate: Yup.date()
+          .required('End date is required')
+          .min(Yup.ref('startDate'), 'End date must be after start date'),
+      paymentMethod: Yup.string().required('Payment method is required'),
+      paymentStatus: Yup.string().required('Payment status is required'),
+      payAdvance: Yup.number().required('Advance payment is required').min(0, 'Advance payment cannot be negative'),
+    }),
     onSubmit: (values) => {
       onSubmit({
         ...values,
@@ -66,22 +59,32 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
   });
 
   useEffect(() => {
-    if (formik.values.carId && formik.values.startDate && formik.values.endDate) {
-      // Find the selected car by car ID
-      const car = cars.find(c => c.number === formik.values.carId);
-      console.log("Price handling:", car);
+    dispatch(getCustomers());
+    dispatch(getCars());
+    dispatch(getBookings()); // Fetch bookings data
+  }, [dispatch]);
 
+  useEffect(() => {
+    if (selectedCar && formik.values.startDate && formik.values.endDate) {
+      const overlappingBookings = bookings.filter(booking =>
+          booking.carId === selectedCar.number &&
+          new Date(booking.startDate) <= new Date(formik.values.endDate) &&
+          new Date(booking.endDate) >= new Date(formik.values.startDate)
+      );
+      setCarBookings(overlappingBookings);
+    }
+  }, [formik.values.startDate, formik.values.endDate, bookings, selectedCar]);
+
+  useEffect(() => {
+    if (formik.values.carId && formik.values.startDate && formik.values.endDate) {
+      const car = cars.find(c => c.number === formik.values.carId);
       if (car) {
         const start = new Date(formik.values.startDate);
         const end = new Date(formik.values.endDate);
-        const days = Math.max(1, differenceInDays(end, start)); // Ensure it's at least 1 day
+        const days = Math.max(1, differenceInDays(end, start));
         const pricePerDay = car.price;
-
-        // Set total days and calculate total amount
         setTotalDays(days);
         setTotalAmount(pricePerDay * days);
-
-        // Update formik's totalAmount and arrearsAmount
         formik.setFieldValue('totalAmount', pricePerDay * days);
         formik.setFieldValue('arrearsAmount', (pricePerDay * days) - formik.values.payAdvance);
       }
@@ -89,14 +92,23 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
   }, [formik.values.carId, formik.values.startDate, formik.values.endDate, cars]);
 
   useEffect(() => {
-    const arrears = formik.values.totalAmount - formik.values.payAdvance;
-    formik.setFieldValue('arrearsAmount', arrears);
+    formik.setFieldValue('arrearsAmount', formik.values.totalAmount - formik.values.payAdvance);
   }, [formik.values.payAdvance, formik.values.totalAmount]);
-
 
   return (
       <form onSubmit={formik.handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+          {carBookings.length > 0 && (
+              <div className="sm:col-span-6 text-red-600">
+                <h4>Car is already booked for the following dates:</h4>
+                {carBookings.map((booking, index) => (
+                    <div key={index}>
+                      <span>From: {booking.startDate} to {booking.endDate}</span>
+                    </div>
+                ))}
+                <p>Please choose different dates or car.</p>
+              </div>
+          )}
           {/* Car Selection */}
           <div className="sm:col-span-3">
             <label htmlFor="carDetails" className="block text-sm font-medium text-gray-700">
@@ -228,7 +240,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
               </div>
               <div className="flex justify-between mt-2">
                 <span>Price per day:</span>
-                <span>${cars.find(car => car.number === formik.values.carId)?.price || 0}</span>
+                <span>Rs.{cars.find(car => car.number === formik.values.carId)?.price || 0}</span>
               </div>
               <div className="flex justify-between mt-2 text-lg font-bold">
                 <span>Total Amount:</span>
@@ -246,8 +258,8 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
-            <button type="submit" className="btn btn-primary">
+          <div className="flex justify-end relative left-[740px]">
+            <button type="submit" className="btn btn-primary bg-blue-950 hover:bg-transparent border-2 border-black hover:text-black font-bold">
               {initialValues ? 'Update Booking' : 'Create Booking'}
             </button>
           </div>

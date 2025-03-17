@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import BookingForm from '../components/BookingForm';
 import { addBooking } from '../store/slices/bookingSlice.js';
-import { setCarAvailability } from '../store/slices/carsSlice';
+// import { setCarAvailability } from '../store/slices/carsSlice';
 
 const AddBooking = () => {
     const dispatch = useDispatch();

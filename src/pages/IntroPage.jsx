@@ -15,21 +15,21 @@ export function IntroPage() {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const resultAction = await dispatch(loginUser(credentials));
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     const resultAction = await dispatch(loginUser(credentials));
+    //
+    //     if (loginUser.fulfilled.match(resultAction)) {
+    //         alert('Login successful!');
+    //         navigate('/dashboard'); // Redirect after login
+    //     }
+    // };
 
-        if (loginUser.fulfilled.match(resultAction)) {
-            alert('Login successful!');
-            navigate('/dashboard'); // Redirect after login
-        }
-    };
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/dashboard');
-        }
-    }, [isAuthenticated, navigate]);
+    // useEffect(() => {
+    //     if (isAuthenticated) {
+    //         navigate('/dashboard');
+    //     }
+    // }, [isAuthenticated, navigate]);
 
     return (
         <div

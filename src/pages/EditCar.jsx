@@ -1,144 +1,45 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateCar } from '../store/slices/carsSlice'; // Redux actions
+import CarForm from '../components/CarForm';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api/car', // Ensure your endpoint is correct
-});
+const CarEdit = () => {
+    const { id } = useParams(); // Get car ID from URL
+    const location = useLocation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-export const saveCar = createAsyncThunk(
-    "cars/saveCar",
-    async (car, { rejectWithValue }) => {
-      try {
-        const response = await api.post("/add", car);
-        return response.data;
-      } catch (err) {
-        return rejectWithValue(err.response?.data || "Error saving car");
-      }
-    }
-);
+    const { cars, loading, error } = useSelector(state => state.cars);
 
-export const getCars = createAsyncThunk("cars/getCars", async (_, { rejectWithValue }) => {
-  try {
-    const response = await api.get("/");
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || "Error fetching cars");
-  }
-});
+    // State for car details
+    const [carDetails, setCarDetails] = useState(location.state?.car || null);
 
-export const updateCar = createAsyncThunk(
-    "cars/updateCar",
-    async (car, { rejectWithValue }) => {
-      try {
-        const response = await api.put(`/update/${car.id}`, car);
-        return response.data;
-      } catch (err) {
-        return rejectWithValue(err.response?.data || "Error updating car");
-      }
-    }
-);
+    // Fetch car details if not passed via state
+    useEffect(() => {
+        if (!carDetails && id && cars.length > 0) {
+            const carToEdit = cars.find(car => String(car.number) === String(id));
+            setCarDetails(carToEdit);
+        }
+    }, [id, cars, carDetails]);
 
-export const deleteCars = createAsyncThunk("cars/deleteCar", async (carId, { rejectWithValue }) => {
-  try {
-    await api.delete(`/delete/${carId}`);
-    return carId;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || "Error deleting car");
-  }
-});
+    // Handle form submission
+    const handleSubmit = (updatedCar) => {
+        dispatch(updateCar(updatedCar));
+        navigate('/cars'); // Navigate back after update
+    };
 
-// Define the setCarAvailability action
-export const setCarAvailability = createAsyncThunk(
-    "cars/setCarAvailability",
-    async ({ carId, available }, { rejectWithValue }) => {
-      try {
-        const response = await api.patch(`/update-availability/${carId}`, { available });
-        return response.data;
-      } catch (err) {
-        return rejectWithValue(err.response?.data || "Error setting car availability");
-      }
-    }
-);
+    // Loading state or error handling
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
+    if (!carDetails) return <p>Car not found for ID: {id}</p>;
 
-const carsSlice = createSlice({
-  name: "cars",
-  initialState: {
-    cars: [],
-    loading: false,
-    error: null,
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-        .addCase(getCars.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(getCars.fulfilled, (state, action) => {
-          state.loading = false;
-          state.cars = action.payload;
-        })
-        .addCase(getCars.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        })
-        .addCase(saveCar.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(saveCar.fulfilled, (state, action) => {
-          state.loading = false;
-          state.cars.push(action.payload);
-        })
-        .addCase(saveCar.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        })
-        .addCase(updateCar.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(updateCar.fulfilled, (state, action) => {
-          state.loading = false;
-          const index = state.cars.findIndex((car) => car.id === action.payload.id);
-          if (index !== -1) {
-            state.cars[index] = action.payload;
-          }
-        })
-        .addCase(updateCar.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        })
-        .addCase(deleteCars.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(deleteCars.fulfilled, (state, action) => {
-          state.loading = false;
-          state.cars = state.cars.filter((car) => car.id !== action.payload);
-        })
-        .addCase(deleteCars.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        })
-        .addCase(setCarAvailability.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(setCarAvailability.fulfilled, (state, action) => {
-          state.loading = false;
-          const updatedCar = action.payload;
-          const index = state.cars.findIndex((car) => car.id === updatedCar.id);
-          if (index !== -1) {
-            state.cars[index] = updatedCar;
-          }
-        })
-        .addCase(setCarAvailability.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        });
-  },
-});
+    return (
+        <div>
+            <h1 className="text-black text-2xl font-bold pb-5 ">Edit Car: {carDetails.name}</h1>
+            <CarForm initialValues={carDetails} onSubmit={handleSubmit} />
+        </div>
+    );
+};
 
-export default carsSlice.reducer;
-// Export the setCarAvailability action
+export default CarEdit;

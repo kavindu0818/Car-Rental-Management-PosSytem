@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 
 const CarCard = ({ car, onDelete }) => {
+
+  console.log("car edit",car);
   return (
+
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="h-48 w-full overflow-hidden">
           <img
@@ -29,14 +32,11 @@ const CarCard = ({ car, onDelete }) => {
 
           <div className="mt-4">
             <p className="text-gray-700">Type: {car.number}</p>
-            <p className="text-lg font-bold text-primary-600 mt-2">${car.price}/day</p>
+            <p className="text-lg font-bold text-primary-600 mt-2">Rs.{car.price}/day</p>
           </div>
 
           <div className="mt-4 flex justify-between">
-            <Link
-                to={`cars/edit/${car.number}`}
-                className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
+            <Link to={`/cars/cars/edit/${car.number}`} className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
               <FiEdit className="mr-1 h-4 w-4" />
               Edit
             </Link>

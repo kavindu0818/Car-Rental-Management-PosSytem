@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiPlus, FiSearch, FiFilter } from "react-icons/fi";
 import CarCard from "../components/CarCard";
-import { getCars } from "../store/slices/carsSlice";
+import { getCars,deleteCar } from "../store/slices/carsSlice";
 
 const Cars = () => {
     const dispatch = useDispatch();
@@ -16,7 +16,7 @@ const Cars = () => {
 
     const handleDelete = (id) => {
         console.log("Deleting car with ID:", id);
-        dispatch(deleteCars(id));
+        dispatch(deleteCar(id));
     };
 
     // Ensure `cars` is an array before filtering
@@ -30,7 +30,7 @@ const Cars = () => {
                 <h1 className="text-2xl font-semibold">Car Management</h1>
                 <Link
                     to="/cars/add"
-                    className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
+                    className="bg-blue-950 text-white px-4 py-2 rounded flex items-center"
                 >
                     <FiPlus className="mr-2" /> Add Car
                 </Link>

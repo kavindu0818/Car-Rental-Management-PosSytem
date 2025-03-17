@@ -12,17 +12,17 @@ import Customers from './pages/Customers';
 import CustomerDetails from './pages/CustomerDetails';
 import InstantBooking from './pages/InstantBooking';
 import NotFound from './pages/NotFound';
-import CurrentBooking from "./pages/CurruntBooking.jsx"; // Fixed typo
-import LoginPage from "./pages/LoginPage";
-import SignUp from "./pages/SingUp.jsx"; // Fixed incorrect import
-import IntroPage from './pages/IntroPage'; // IntroPage import
+import CurrentBooking from './pages/CurruntBooking';
+import LoginPage from './pages/LoginPage';
+import SignUp from './pages/SingUp';
+import IntroPage from './pages/IntroPage';
+import { Navigate } from 'react-router-dom';
 
 function App() {
     return (
         <Router>
             <Routes>
                 {/* Default route for intro page */}
-                {/*<Route path="/" element={<IntroPage />} />*/}
                 <Route index element={<IntroPage />} />
 
                 {/* Routes for Login/SignUp */}
@@ -31,7 +31,7 @@ function App() {
 
                 {/* Protected routes inside Layout */}
                 <Route path="/" element={<Layout />}>
-                    <Route index element={<Dashboard />} />
+                    {/*<Route index element={<Navigate to="/dashboard" />} />*/}
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="cars" element={<Cars />} />
                     <Route path="cars/add" element={<AddCar />} />

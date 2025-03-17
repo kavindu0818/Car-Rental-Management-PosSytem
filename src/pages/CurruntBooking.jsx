@@ -151,7 +151,7 @@ const CurruntBooking = () => {
                     <input type="number" name="payArrears" id="payArrears" className="border rounded-md p-2 w-full"
                            onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.payArrears}/>
                     <button type="button" onClick={handlePayArrears}
-                            className="ml-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Pay
+                            className="ml-2 bg-black text-white px-4 py-2 rounded-md hover:bg-green-700">Pay
                     </button>
                 </div>
                 {formik.touched.payArrears && formik.errors.payArrears && (
@@ -195,7 +195,7 @@ const CurruntBooking = () => {
             </div>
 
             <div className="col-span-3 flex justify-end">
-                <button type="button" onClick={handleDeleteBooking} className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700" >Submit
+                <button type="button" onClick={handleDeleteBooking} className="bg-blue-950 font-bold left-80 relative text-white px-6 py-2 rounded-md hover:bg-transparent hover:border-2 border-black hover:text-black rounded" >Submit
                     Booking
                 </button>
                 {/*<button type="button" onClick={handleDeleteBooking}*/}

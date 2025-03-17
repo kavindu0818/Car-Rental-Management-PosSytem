@@ -16,7 +16,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: FiHome },
+    { name: 'Dashboard', href: '/dashboard', icon: FiHome },
     { name: 'Cars', href: '/cars', icon: FiTruck },
     { name: 'Bookings', href: '/bookings', icon: FiCalendar },
     { name: 'Booking History', href: '/booking-history', icon: FiClock },

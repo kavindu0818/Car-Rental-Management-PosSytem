@@ -1,19 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Ensure axios is configured properly with the correct base URL
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api/car',
+    baseURL: 'http://localhost:8080/api/car', // Ensure your endpoint is correct
 });
 
-
-// Save a new car
+// Create async thunks
 export const saveCar = createAsyncThunk(
     "cars/saveCar",
     async (car, { rejectWithValue }) => {
         try {
-            console.log("car slice",car)
-            const response = await api.post("/add", car); // Ensure this is the correct endpoint
+            console.log("car data in slice:", car);
+            const response = await api.post("/add", car);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Error saving car");
@@ -21,12 +19,11 @@ export const saveCar = createAsyncThunk(
     }
 );
 
-// Get all cars
 export const getCars = createAsyncThunk(
     "cars/getCars",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await api.get("/"); // Ensure this is the correct endpoint
+            const response = await api.get("/");
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Error fetching cars");
@@ -34,19 +31,31 @@ export const getCars = createAsyncThunk(
     }
 );
 
-// Delete a car
-export const deleteCars = createAsyncThunk(
+export const updateCar = createAsyncThunk(
+    "cars/updateCar",
+    async (car, { rejectWithValue }) => {
+        try {
+            const response = await api.put(`/update/${car.id}`, car);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || "Error updating car");
+        }
+    }
+);
+
+export const deleteCar = createAsyncThunk(
     "cars/deleteCar",
     async (carId, { rejectWithValue }) => {
         try {
-            await api.delete(`/delete/${carId}`); // Ensure this is the correct endpoint
-            return carId;
+            await api.delete(`/delete/${carId}`);
+            return carId; // Return the deleted car's ID
         } catch (err) {
             return rejectWithValue(err.response?.data || "Error deleting car");
         }
     }
 );
 
+// Define slice
 const carsSlice = createSlice({
     name: "cars",
     initialState: {
@@ -54,19 +63,9 @@ const carsSlice = createSlice({
         loading: false,
         error: null,
     },
-    reducers: {
-        // This is the new setCarAvailability action
-        setCarAvailability: (state, action) => {
-            const { carId, availability } = action.payload;
-            const car = state.cars.find((car) => car.id === carId);
-            if (car) {
-                car.available = availability;
-            }
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
-            // Handle getCars action
             .addCase(getCars.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -79,8 +78,6 @@ const carsSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-
-            // Handle saveCar action
             .addCase(saveCar.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -93,22 +90,35 @@ const carsSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-
-            // Handle deleteCar action
-            .addCase(deleteCars.pending, (state) => {
+            .addCase(updateCar.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(deleteCars.fulfilled, (state, action) => {
+            .addCase(updateCar.fulfilled, (state, action) => {
+                state.loading = false;
+                const index = state.cars.findIndex((car) => car.id === action.payload.id);
+                if (index !== -1) {
+                    state.cars[index] = action.payload;
+                }
+            })
+            .addCase(updateCar.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(deleteCar.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteCar.fulfilled, (state, action) => {
                 state.loading = false;
                 state.cars = state.cars.filter((car) => car.id !== action.payload);
             })
-            .addCase(deleteCars.rejected, (state, action) => {
+            .addCase(deleteCar.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
     },
 });
 
-export const { setCarAvailability } = carsSlice.actions; // Export the setCarAvailability action
+// Export reducer
 export default carsSlice.reducer;

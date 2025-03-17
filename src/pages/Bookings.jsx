@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FiSearch, FiFilter } from 'react-icons/fi';
 import CarCard from '../components/CarCard';
 import { getCars } from '../store/slices/carsSlice.js';
+import BookingCard from "../components/BookingCard.jsx";
 
 const BookingPage = () => {
     const dispatch = useDispatch(); // Initialize dispatch
@@ -45,11 +46,11 @@ const BookingPage = () => {
                 {filteredCars.length > 0 ? (
                     filteredCars.map(car => (
                         <div key={car.id} className="border rounded-lg shadow p-4">
-                            <CarCard car={car} />
+                            <BookingCard car={car} />
                             <Link
                                 to={`/bookings/add/${car.id}`}
                                 state={{ selectedCar: car }}
-                                className="mt-4 block text-center  text-black bg-transparent border-black hover:bg-blue-950 text-white  text-white py-2 rounded"
+                                className="mt-4 block text-center  text-white font-bold bg-blue-950 rounded border-black hover:bg-transparent border-2 hover:border-black hover:text-black py-2 "
                             >
                                 Book Vehicle
                             </Link>

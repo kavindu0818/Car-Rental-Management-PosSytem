@@ -242,7 +242,7 @@ const CarForm = ({props, onSubmit, initialValues = null }) => {
 
         <button
             type="submit"
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="w-full bg-blue-950 text-white px-4 py-2 rounded-md hover:bg-transparent border-2 border-black hover:text-black"
         >
           Submit
         </button>

@@ -9,8 +9,8 @@ export const store = configureStore({
     reducer: {
         cars: carsSlice,
         customers: customersSlice,
-        booking: bookingSlice,
-        bookingsHistory: bookingHistorySlice,
+        bookings: bookingSlice, // Corrected to "bookings" here for consistency
+        bookingHistory: bookingHistorySlice,
         user: userSlice,
     },
 });

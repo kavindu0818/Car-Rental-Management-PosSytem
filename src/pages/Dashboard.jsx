@@ -6,6 +6,10 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar } from 'react-chartjs-2';
 import StatCard from '../components/StatCard';
 import { setDashboardStats } from '../store/slices/dashboardSlice';
+import {getAllBookingHistory} from "../store/slices/BookingHistorySlice.js";
+import {getCars} from "../store/slices/carsSlice.js";
+import {getCustomers} from "../store/slices/customersSlice.js";
+import {getBookings} from "../store/slices/bookingSlice.js";
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -35,6 +39,12 @@ const Dashboard = () => {
       { month: 'May', revenue: 2800 },
       { month: 'Jun', revenue: 2100 },
     ];
+
+    // useEffect(() => {
+    //   // dispatch(getCars());
+    //   // dispatch(getCustomers());
+    //   dispatch(getBookings());
+    // }, [bookings]);
 
     // Get recent bookings
     const recentBookings = [...bookings]
@@ -77,7 +87,7 @@ const Dashboard = () => {
       {
         label: 'Monthly Revenue',
         data: stats.monthlyRevenue?.map(item => item.revenue) || [],
-        backgroundColor: 'rgba(14, 165, 233, 0.7)',
+        backgroundColor: 'rgba(12, 10, 36)',
         borderColor: 'rgba(14, 165, 233, 1)',
         borderWidth: 1,
       },
@@ -102,10 +112,10 @@ const Dashboard = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <div className="flex space-x-3">
-            <Link to="/cars/add" className="btn btn-primary flex items-center">
+            <Link to="/cars/add" className="btn btn-primary bg-blue-950 flex items-center">
               <FiPlus className="mr-1" /> Add Car
             </Link>
-            <Link to="/bookings/add" className="btn btn-primary flex items-center">
+            <Link to="/bookings" className="btn btn-primary bg-blue-950 flex items-center">
               <FiPlus className="mr-1" /> Add Booking
             </Link>
           </div>
