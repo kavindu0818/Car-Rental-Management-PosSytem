@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { deleteBooking, updateBooking } from "../store/slices/bookingSlice";
-import { addBookingHistory } from "../store/slices/bookingHistorySlice"; // Import the action
+import {saveHistory} from "../store/slices/HistorySlice.js"; // Import the action
 
 const CurruntBooking = () => {
     const location = useLocation();
@@ -64,7 +64,7 @@ const CurruntBooking = () => {
         },
         onSubmit: async (values) => {
             try {
-                await dispatch(addBookingHistory(values)); // Dispatch the action to store booking in history
+                await dispatch(saveHistory(values)); // Dispatch the action to store booking in history
                 alert("Booking sent to history successfully!");
                 navigate("/booking-history");
             } catch (error) {

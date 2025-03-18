@@ -14,6 +14,8 @@ const Cars = () => {
         dispatch(getCars()); // Fetch cars on component mount
     }, [dispatch]);
 
+    console.log("car thma bn",cars)
+
     const handleDelete = (id) => {
         console.log("Deleting car with ID:", id);
         dispatch(deleteCar(id));

@@ -6,7 +6,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar } from 'react-chartjs-2';
 import StatCard from '../components/StatCard';
 import { setDashboardStats } from '../store/slices/dashboardSlice';
-import {getAllBookingHistory} from "../store/slices/BookingHistorySlice.js";
+import {getHistory} from "../store/slices/HistorySlice.js";
 import {getCars} from "../store/slices/carsSlice.js";
 import {getCustomers} from "../store/slices/customersSlice.js";
 import {getBookings} from "../store/slices/bookingSlice.js";

@@ -7,7 +7,7 @@ import AddCar from './pages/AddCar';
 import EditCar from './pages/EditCar';
 import Bookings from './pages/Bookings';
 import AddBooking from './pages/AddBooking';
-import BookingHistory from './pages/BookingHistory';
+import HistoryBooking from './pages/History.jsx';
 import Customers from './pages/Customers';
 import CustomerDetails from './pages/CustomerDetails';
 import InstantBooking from './pages/InstantBooking';
@@ -39,7 +39,7 @@ function App() {
                     <Route path="bookings" element={<Bookings />} />
                     <Route path="bookings/add/:id" element={<AddBooking />} />
                     <Route path="current-booking" element={<CurrentBooking />} />
-                    <Route path="booking-history" element={<BookingHistory />} />
+                    <Route path="history" element={<HistoryBooking />} />
                     <Route path="customers" element={<Customers />} />
                     <Route path="customers/:id" element={<CustomerDetails />} />
                     <Route path="instant-booking" element={<InstantBooking />} />

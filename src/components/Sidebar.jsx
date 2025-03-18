@@ -19,7 +19,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Dashboard', href: '/dashboard', icon: FiHome },
     { name: 'Cars', href: '/cars', icon: FiTruck },
     { name: 'Bookings', href: '/bookings', icon: FiCalendar },
-    { name: 'Booking History', href: '/booking-history', icon: FiClock },
+    { name: 'History', href: '/history', icon: FiClock },
     { name: 'Customers', href: '/customers', icon: FiUsers },
     { name: 'Instant Booking', href: '/instant-booking', icon: FiZap },
     { name: 'Settings', href: '/settings', icon: FiSettings },
