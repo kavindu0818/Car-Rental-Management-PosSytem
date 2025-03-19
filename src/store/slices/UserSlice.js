@@ -6,9 +6,10 @@ const initialState = {
     jwt_token: null,
     refresh_token: null,
     username: null,
-    isAuthenticated: false,
+    isAuthenticated: Boolean(localStorage.getItem('authToken')),
     loading: false,
     error: '',
+    userInfo: null,
 };
 
 // Axios instance for API requests
@@ -23,6 +24,7 @@ export const saveUser = createAsyncThunk(
     "user/saveUser",
     async (user, { rejectWithValue }) => {
         try {
+            console.log("user slice save",user)
             const response = await api.post("/users/save", user);
             return response.data;
         } catch (err) {
@@ -31,45 +33,51 @@ export const saveUser = createAsyncThunk(
     }
 );
 
-// Login user
+// Get user by username
+export const getUser = createAsyncThunk(
+    "user/getUser",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await api.get(`/get/${id}`);
+            console.log("userSlice",response.data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Error fetching user");
+        }
+    }
+);
+
 // Login user
 export const loginUser = createAsyncThunk(
     'user/loginUser',
     async (credentials, { rejectWithValue }) => {
         try {
-            console.log("user login awo", credentials);
-            const response = await api.post("/users/login", credentials); // Fixed variable name here
-            // Store JWT token in localStorage or sessionStorage
+            console.log("User login attempt", credentials);
+            const response = await api.post("/users/login", credentials);
             localStorage.setItem('authToken', response.data.token);
-
-            console.log("response key set", response.data);
+            console.log("Login successful", response.data);
             return response.data;
         } catch (error) {
-            // Check if the error is CORS related
             if (error.response && error.response.status === 403) {
                 return rejectWithValue("CORS issue or invalid credentials");
             }
-            return rejectWithValue(error.response ? error.response.data.message : error.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
 
-
-
 // ** User Slice **
 const UserSlice = createSlice({
     name: 'user',
-    initialState: {
-        isAuthenticated: Boolean(localStorage.getItem('authToken')), // Check if there's a token in localStorage
-        loading: false,
-        error: '',
-        userInfo: null,
-    },
+    initialState,
     reducers: {
         logout: (state) => {
             localStorage.removeItem('authToken');
             state.isAuthenticated = false;
             state.userInfo = null;
+            state.jwt_token = null;
+            state.refresh_token = null;
+            state.username = null;
         },
     },
     extraReducers: (builder) => {
@@ -91,6 +99,20 @@ const UserSlice = createSlice({
             });
 
         builder
+            .addCase(getUser.pending, (state) => {
+                state.loading = true;
+                state.error = '';
+            })
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userInfo = action.payload;
+            })
+            .addCase(getUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+
+        builder
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
                 state.error = '';
@@ -104,8 +126,8 @@ const UserSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
-
     },
 });
 
+export const { logout } = UserSlice.actions;
 export default UserSlice.reducer;

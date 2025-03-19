@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../store/slices/UserSlice.js';
-import loginVideo from '../Assets/video/Car-Animation.mp4';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginUser, getUser } from "../store/slices/UserSlice.js";
+import loginVideo from "../Assets/video/Car-Animation.mp4";
 
-export function Login() {
-    const navigate = useNavigate();
+const Login = () => {
+    const [credentials, setCredentials] = useState({ username: "", password: "" });
+    const [error, setError] = useState(""); // Added state for error handling
+    const [loading, setLoading] = useState(false); // Added state for loading
     const dispatch = useDispatch();
-
-    const { isAuthenticated, loading, error } = useSelector((state) => state.user || {});  // Fallback to empty object
-
-    const [credentials, setCredentials] = useState({
-        username: '',
-        password: '',
-    });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -21,22 +17,28 @@ export function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const resultAction = await dispatch(loginUser(credentials));
+        setLoading(true);
+        setError(""); // Reset error message before attempting login
 
-        if (loginUser.fulfilled.match(resultAction)) {
-            alert('Login successful!');
-            navigate('/dashboard'); // Redirect after login
+        try {
+            const resultAction = await dispatch(loginUser(credentials));
+
+            if (loginUser.fulfilled.match(resultAction)) {
+                alert("Login successful!");
+                await dispatch(getUser(credentials.username)); // Fetch user details after login
+                navigate("/dashboard");
+            } else {
+                setError("Login failed. Please check your credentials."); // Set error message
+            }
+        } catch (err) {
+            setError("An unexpected error occurred. Please try again.");
         }
+
+        setLoading(false);
     };
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/dashboard');
-        }
-    }, [isAuthenticated, navigate]);
-
     return (
-        <div className="relative w-full h-screen bg-blue-950 overflow-hidden"> {/* Set background color to blue */}
+        <div className="relative w-full h-screen bg-blue-950 overflow-hidden">
             {/* Background Video */}
             <div className="absolute inset-0">
                 <video autoPlay loop muted className="w-full h-full object-cover" style={{ opacity: 0.6 }}>
@@ -51,6 +53,7 @@ export function Login() {
                     <div className="mb-6">
                         <h2 className="text-4xl font-semibold text-white text-center">Login</h2>
                     </div>
+                    {/* Display error message if any */}
                     {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div>
@@ -83,11 +86,11 @@ export function Login() {
                                 className="bg-transparent border-white border-2 text-white py-2 px-4 rounded hover:bg-black"
                                 disabled={loading}
                             >
-                                {loading ? 'Logging in...' : 'Login'}
+                                {loading ? "Logging in..." : "Login"}
                             </button>
                             <button
                                 type="button"
-                                onClick={() => navigate('/signUp')}
+                                onClick={() => navigate("/signUp")}
                                 className="bg-blue-950 border-white border-2 text-white py-2 px-4 rounded hover:bg-gray-500"
                             >
                                 Create Account
@@ -98,6 +101,6 @@ export function Login() {
             </div>
         </div>
     );
-}
+};
 
 export default Login;

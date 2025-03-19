@@ -13,21 +13,60 @@ const SignUp = () => {
         username: "",
         email: "",
         password: "",
-        role: ""  // Add a role field
+        role: "",
+        image: "",  // Store as image path (after upload)
     });
 
+    const [imagePreview, setImagePreview] = useState(null); // State for image preview
+
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type, files } = e.target;
+
+        if (type === "file") {
+            const file = files[0];
+            setFormData({ ...formData, [name]: file });
+
+            // Create an image preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result); // For preview
+            };
+            if (file) {
+                reader.readAsDataURL(file); // Read the file as Base64 for preview (optional)
+            }
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const resultAction = await dispatch(saveUser(formData));
 
-        if (saveUser.fulfilled.match(resultAction)) {
-            alert("Sign-up successful!");
-            navigate("/login");
+        try {
+            // You can upload the image to the server here and get the image URL or path back
+            // Assuming image is uploaded and you get the image URL as the response
+            if (formData.image) {
+                const uploadedImageUrl = await uploadImageToServer(formData.image); // Replace with actual upload function
+                formData.image = uploadedImageUrl; // Update the formData with the image URL
+            }
+
+            const resultAction = await dispatch(saveUser(formData)); // Dispatch the form data
+
+            if (saveUser.fulfilled.match(resultAction)) {
+                alert("Sign-up successful!");
+                navigate("/login");
+            }
+        } catch (error) {
+            console.error("Sign-up error:", error);
+            alert("Error signing up, please try again.");
         }
+    };
+
+    const uploadImageToServer = async (file) => {
+        // Replace this function with actual server upload logic
+        // Here we simulate image upload and return a dummy URL
+        const dummyUrl = '/uploads/user-images/' + file.name; // Simulate image upload URL
+        return dummyUrl; // Return the image URL
     };
 
     return (
@@ -102,6 +141,26 @@ const SignUp = () => {
                                 <option value="CASHIER">Cashier</option>
                                 <option value="ADMIN">Admin</option>
                             </select>
+                        </div>
+
+                        {/* Image Upload */}
+                        <div>
+                            <label className="block text-gray-300 text-sm">Profile Picture</label>
+                            <input
+                                type="file"
+                                name="image"
+                                onChange={handleChange}
+                                className="mt-1 p-2 w-full bg-gray-700 text-white rounded"
+                            />
+                            {/*{imagePreview && (*/}
+                            {/*    <div className="mt-2">*/}
+                            {/*        <img*/}
+                            {/*            src={imagePreview}*/}
+                            {/*            alt="Image Preview"*/}
+                            {/*            className="w-32 h-32 object-cover rounded-full"*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*)}*/}
                         </div>
 
                         <div className="flex justify-between">

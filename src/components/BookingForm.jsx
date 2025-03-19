@@ -16,6 +16,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
   const [totalDays, setTotalDays] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const [carBookings, setCarBookings] = useState([]);
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
 
   const cars = useSelector(state => state.cars.cars);
   const customers = useSelector(state => state.customers.customers);
@@ -72,6 +73,9 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
           new Date(booking.endDate) >= new Date(formik.values.startDate)
       );
       setCarBookings(overlappingBookings);
+      if (overlappingBookings.length > 0) {
+        setShowModal(true); // Show modal when there are overlapping bookings
+      }
     }
   }, [formik.values.startDate, formik.values.endDate, bookings, selectedCar]);
 
@@ -96,175 +100,191 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
   }, [formik.values.payAdvance, formik.values.totalAmount]);
 
   return (
-      <form onSubmit={formik.handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-          {carBookings.length > 0 && (
-              <div className="sm:col-span-6 text-red-600">
-                <h4>Car is already booked for the following dates:</h4>
-                {carBookings.map((booking, index) => (
-                    <div key={index}>
-                      <span>From: {booking.startDate} to {booking.endDate}</span>
-                    </div>
-                ))}
-                <p>Please choose different dates or car.</p>
-              </div>
-          )}
-          {/* Car Selection */}
-          <div className="sm:col-span-3">
-            <label htmlFor="carDetails" className="block text-sm font-medium text-gray-700">
-              Car
-            </label>
-            <input
-                type="text"
-                id="carDetails"
-                name="carDetails"
-                className="input bg-gray-100 cursor-not-allowed"
-                placeholder="Select a car"
-                value={formik.values.carDetails || (selectedCar ? selectedCar.name : '')}
-                readOnly
-            />
-          </div>
-
-          {/* Customer Selection */}
-          <div className="sm:col-span-3">
-            <label htmlFor="customerId" className="block text-sm font-medium text-gray-700">
-              Customer
-            </label>
-            <select
-                id="customerId"
-                name="customerId"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.customerId}
-            >
-              <option value="">Select a customer</option>
-              {customers.map(customer => (
-                  <option key={customer.id} value={customer.id}>
-                    {customer.name} ({customer.phone})
-                  </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Date Selection */}
-          <div className="sm:col-span-3">
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-              Start Date
-            </label>
-            <input
-                type="date"
-                name="startDate"
-                id="startDate"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.startDate}
-            />
-          </div>
-
-          <div className="sm:col-span-3">
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-              End Date
-            </label>
-            <input
-                type="date"
-                name="endDate"
-                id="endDate"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.endDate}
-            />
-          </div>
-
-          {/* Payment and Booking Status */}
-          <div className="sm:col-span-3">
-            <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
-              Payment Method
-            </label>
-            <select
-                id="paymentMethod"
-                name="paymentMethod"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.paymentMethod}
-            >
-              <option value="card">Credit/Debit Card</option>
-              <option value="cash">Cash</option>
-              <option value="bank">Bank Transfer</option>
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700">
-              Payment Status
-            </label>
-            <select
-                id="paymentStatus"
-                name="paymentStatus"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.paymentStatus}
-            >
-              <option value="pending">Pending</option>
-              <option value="paid">Paid</option>
-              <option value="failed">Failed</option>
-              <option value="refunded">Refunded</option>
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label htmlFor="payAdvance" className="block text-sm font-medium text-gray-700">
-              Pay Advance (Rs)
-            </label>
-            <input
-                type="number"
-                name="payAdvance"
-                id="payAdvance"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.payAdvance}
-            />
-          </div>
-
-          {/* Total Price Calculation */}
-          <div className="sm:col-span-6">
-            <div className="bg-gray-50 p-4 rounded-md">
-              <div className="flex justify-between">
-                <span>Duration:</span>
-                <span>{totalDays} day(s)</span>
-              </div>
-              <div className="flex justify-between mt-2">
-                <span>Price per day:</span>
-                <span>Rs.{cars.find(car => car.number === formik.values.carId)?.price || 0}</span>
-              </div>
-              <div className="flex justify-between mt-2 text-lg font-bold">
-                <span>Total Amount:</span>
-                <span>Rs.{formik.values.totalAmount}</span>
-              </div>
-              <div className="flex justify-between mt-2">
-                <span>Advance Price:</span>
-                <span>Rs.{formik.values.payAdvance || 0}</span>
-              </div>
-              <div className="flex justify-between mt-2 text-lg font-bold">
-                <span>Arrears Amount:</span>
-                <span>Rs.{formik.values.arrearsAmount}</span>
+      <>
+        {/* Modal for Overlapping Bookings */}
+        {showModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h4 className="text-lg font-bold text-red-600">
+                  Car is already booked for the following dates:
+                </h4>
+                <ul className="mt-2">
+                  {carBookings.map((booking, index) => (
+                      <li key={index} className="text-gray-800">
+                        From: {booking.startDate} to {booking.endDate}
+                      </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-gray-600">Please choose different dates or a car.</p>
+                <button
+                    onClick={() => setShowModal(false)}
+                    className="mt-4 bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Close
+                </button>
               </div>
             </div>
-          </div>
+        )}
 
-          {/* Submit Button */}
-          <div className="flex justify-end relative left-[740px]">
-            <button type="submit" className="btn btn-primary bg-blue-950 hover:bg-transparent border-2 border-black hover:text-black font-bold">
-              {initialValues ? 'Update Booking' : 'Create Booking'}
-            </button>
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+            {/* Car Selection */}
+            <div className="sm:col-span-3">
+              <label htmlFor="carDetails" className="block text-sm font-medium text-gray-700">
+                Car
+              </label>
+              <input
+                  type="text"
+                  id="carDetails"
+                  name="carDetails"
+                  className="input bg-gray-100 cursor-not-allowed"
+                  placeholder="Select a car"
+                  value={formik.values.carDetails || (selectedCar ? selectedCar.name : '')}
+                  readOnly
+              />
+            </div>
+
+            {/* Customer Selection */}
+            <div className="sm:col-span-3">
+              <label htmlFor="customerId" className="block text-sm font-medium text-gray-700">
+                Customer
+              </label>
+              <select
+                  id="customerId"
+                  name="customerId"
+                  className="input"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.customerId}
+              >
+                <option value="">Select a customer</option>
+                {customers.map(customer => (
+                    <option key={customer.id} value={customer.id}>
+                      {customer.name} ({customer.phone})
+                    </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date Selection */}
+            <div className="sm:col-span-3">
+              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                Start Date
+              </label>
+              <input
+                  type="date"
+                  name="startDate"
+                  id="startDate"
+                  className="input"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.startDate}
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
+                End Date
+              </label>
+              <input
+                  type="date"
+                  name="endDate"
+                  id="endDate"
+                  className="input"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.endDate}
+              />
+            </div>
+
+            {/* Payment and Booking Status */}
+            <div className="sm:col-span-3">
+              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
+                Payment Method
+              </label>
+              <select
+                  id="paymentMethod"
+                  name="paymentMethod"
+                  className="input"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.paymentMethod}
+              >
+                <option value="card">Credit/Debit Card</option>
+                <option value="cash">Cash</option>
+                <option value="bank">Bank Transfer</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="paymentStatus" className="block text-sm font-medium text-gray-700">
+                Payment Status
+              </label>
+              <select
+                  id="paymentStatus"
+                  name="paymentStatus"
+                  className="input"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.paymentStatus}
+              >
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+                <option value="failed">Failed</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="payAdvance" className="block text-sm font-medium text-gray-700">
+                Pay Advance (Rs)
+              </label>
+              <input
+                  type="number"
+                  name="payAdvance"
+                  id="payAdvance"
+                  className="input"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.payAdvance}
+              />
+            </div>
+
+            {/* Total Price Calculation */}
+            <div className="sm:col-span-6">
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between">
+                  <span>Duration:</span>
+                  <span>{totalDays} day(s)</span>
+                </div>
+                <div className="flex justify-between mt-2">
+                  <span>Price per day:</span>
+                  <span>Rs.{cars.find(car => car.number === formik.values.carId)?.price || 0}</span>
+                </div>
+                <div className="flex justify-between mt-2 text-lg font-bold">
+                  <span>Total Amount:</span>
+                  <span>Rs.{formik.values.totalAmount}</span>
+                </div>
+                <div className="flex justify-between mt-2">
+                  <span>Advance Price:</span>
+                  <span>Rs.{formik.values.payAdvance || 0}</span>
+                </div>
+                <div className="flex justify-between mt-2 text-lg font-bold">
+                  <span>Arrears Amount:</span>
+                  <span>Rs.{formik.values.arrearsAmount}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-end relative left-[740px]">
+              <button type="submit" className="btn btn-primary bg-blue-950 hover:bg-transparent border-2 border-black hover:text-black font-bold">
+                {initialValues ? 'Update Booking' : 'Create Booking'}
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </>
   );
 };
 

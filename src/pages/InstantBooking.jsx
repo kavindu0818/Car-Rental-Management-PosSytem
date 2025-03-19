@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FiSearch, FiEdit, FiTrash2, FiActivity, FiBook } from 'react-icons/fi';
 import { deleteBooking, getBookings } from '../store/slices/bookingSlice.js';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import {GrDocumentUser} from "react-icons/gr";
+import {MdRecentActors} from "react-icons/md"; // Import useNavigate
 
 const InstantBooking = () => {
   const dispatch = useDispatch();
@@ -49,15 +51,22 @@ const InstantBooking = () => {
 
   console.log(bookings)
   return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Booking History</h1>
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-6 border-b pb-4">
+          <div className="flex items-center gap-4">
+            <MdRecentActors className="text-5xl text-blue-900"/>
+            <div>
+              <h1 className="text-3xl font-bold text-blue-950">Recent Bookings</h1>
+              <h6 className="text-gray-500 text-lg font-bold">Manage your fleet efficiently</h6>
+              {/*<h1 className="text-3xl font-bold text-blue-950">Car Management</h1>*/}
+            </div>
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FiSearch className="h-5 w-5 text-gray-400" />
+              <FiSearch className="h-5 w-5 text-gray-400"/>
             </div>
             <input
                 type="text"
@@ -103,13 +112,13 @@ const InstantBooking = () => {
                               onClick={() => handleSetBookingView(booking.bookingId, booking)} // Pass booking details as argument
                               className="text-red-600 hover:text-red-900"
                           >
-                            <FiBook />
+                            <FiBook/>
                           </button>
                           <button
                               onClick={() => handleDelete(booking.bookingId)}
                               className="text-red-600 hover:text-red-900"
                           >
-                            <FiTrash2 />
+                            <FiTrash2/>
                           </button>
                         </td>
                       </tr>

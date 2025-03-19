@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'; // Import useDispatch
 import { Link } from 'react-router-dom';
-import { FiSearch, FiFilter } from 'react-icons/fi';
+import {FiSearch, FiFilter, FiPlus} from 'react-icons/fi';
 import CarCard from '../components/CarCard';
 import { getCars } from '../store/slices/carsSlice.js';
 import BookingCard from "../components/BookingCard.jsx";
+// import {Do} from "react-icons/pi";
+import {GrDocumentUser} from "react-icons/gr";
 
 const BookingPage = () => {
     const dispatch = useDispatch(); // Initialize dispatch
@@ -23,13 +25,20 @@ const BookingPage = () => {
     );
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold">Book a Vehicle</h1>
+        <div className="p-4">
+            <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <div className="flex items-center gap-4">
+                    <GrDocumentUser className="text-5xl text-blue-900"/>
+                    <div>
+                        <h1 className="text-3xl font-bold text-blue-950">Booking Management</h1>
+                        <h6 className="text-gray-500 text-lg font-bold">Manage your fleet efficiently</h6>
+                        {/*<h1 className="text-3xl font-bold text-blue-950">Car Management</h1>*/}
+                    </div>
+                </div>
             </div>
             <div className="flex gap-4 mb-6">
                 <div className="relative flex-grow">
-                    <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
+                    <FiSearch className="absolute left-3 top-2.5 text-gray-500"/>
                     <input
                         type="text"
                         placeholder="Search available cars..."
@@ -39,17 +48,17 @@ const BookingPage = () => {
                     />
                 </div>
                 <button className="bg-gray-200 px-4 py-2 rounded flex items-center">
-                    <FiFilter className="mr-2" /> Filter
+                    <FiFilter className="mr-2"/> Filter
                 </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCars.length > 0 ? (
                     filteredCars.map(car => (
                         <div key={car.id} className="border rounded-lg shadow p-4">
-                            <BookingCard car={car} />
+                            <BookingCard car={car}/>
                             <Link
                                 to={`/bookings/add/${car.id}`}
-                                state={{ selectedCar: car }}
+                                state={{selectedCar: car}}
                                 className="mt-4 block text-center  text-white font-bold bg-blue-950 rounded border-black hover:bg-transparent border-2 hover:border-black hover:text-black py-2 "
                             >
                                 Book Vehicle
