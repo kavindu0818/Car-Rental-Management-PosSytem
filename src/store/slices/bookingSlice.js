@@ -24,7 +24,8 @@ export const getBookings = createAsyncThunk(
     "bookings/getBookings",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await api.get("/"); // Fetch all bookings
+            const response = await api.get("/");
+            console.log("getBooking Slice",response.data)// Fetch all bookings
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || "Error fetching bookings");

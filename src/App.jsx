@@ -17,10 +17,12 @@ import LoginPage from './pages/LoginPage';
 import SignUp from './pages/SingUp';
 import IntroPage from './pages/IntroPage';
 import { Navigate } from 'react-router-dom';
+import {ToastContainer} from "react-toastify";
 
 function App() {
     return (
         <Router>
+            <ToastContainer />
             <Routes>
                 {/* Default route for intro page */}
                 <Route index element={<IntroPage />} />

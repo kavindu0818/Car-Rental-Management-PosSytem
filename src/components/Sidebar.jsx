@@ -11,18 +11,21 @@ import {
   FiZap,
   FiSettings
 } from 'react-icons/fi';
+import {BiCar} from "react-icons/bi";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: FiHome },
-    { name: 'Cars', href: '/cars', icon: FiTruck },
+    { name: 'Cars', href: '/cars', icon: BiCar },
     { name: 'Bookings', href: '/bookings', icon: FiCalendar },
-    { name: 'History', href: '/history', icon: FiClock },
+    { name: 'Recent Bookings', href: '/instant-booking', icon: FiZap },
     { name: 'Customers', href: '/customers', icon: FiUsers },
-    { name: 'Instant Booking', href: '/instant-booking', icon: FiZap },
-    { name: 'Settings', href: '/settings', icon: FiSettings },
+    { name: 'History', href: '/history', icon: FiClock },
+    // { name: 'Customers', href: '/customers', icon: FiUsers },
+    // { name: 'Recent Bookings', href: '/instant-booking', icon: FiZap },
+    // { name: 'Settings', href: '/settings', icon: FiSettings },
   ];
 
   return (

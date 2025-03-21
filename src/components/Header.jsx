@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FiUser } from "react-icons/fi";
+import user from"../Assets/userImage.jpg"
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.user); // Get user info from Redux
@@ -36,18 +37,19 @@ const Header = () => {
                   className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
               >
-                <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                  {/* Render the image if available, or fallback to default icon */}
-                  {getImageSrc() ? (
+                <div
+                    className="h-10 w-10 rounded-full bg-blue-950 flex items-center justify-center text-white overflow-hidden">
+                  {user ? (
                       <img
-                          src={getImageSrc()} // Display the user image
+                          src={user} // Display the user image
                           alt="User Profile"
-                          className="h-full w-full object-cover rounded-full"
+                          className="h-10 w-10 object-cover rounded-full"
                       />
                   ) : (
-                      <FiUser className="h-6 w-6" /> // Display fallback icon if no image
+                      <span className="text-sm">U</span> // Fallback content (Initial or icon)
                   )}
                 </div>
+
               </button>
 
               {userMenuOpen && (

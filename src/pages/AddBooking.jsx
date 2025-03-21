@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import BookingForm from '../components/BookingForm';
 import { addBooking } from '../store/slices/bookingSlice.js';
+import {toast} from "react-toastify";
 // import { setCarAvailability } from '../store/slices/carsSlice';
 
 const AddBooking = () => {
@@ -13,6 +14,18 @@ const AddBooking = () => {
     const handleSubmit = (values) => {
         console.log("booking eka hari bn 12345",values);
         dispatch(addBooking(values));
+        toast.success("✅ Booking Successfully.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            style: { backgroundColor: "#0b072b", color: "#ffffff" }, // Dark Blue Background & White Text
+        });
+
 
         // If the booking status is active, mark the car as unavailable
         if (values.status === 'active') {

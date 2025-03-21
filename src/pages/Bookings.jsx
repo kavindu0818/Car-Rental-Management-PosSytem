@@ -31,7 +31,7 @@ const BookingPage = () => {
                     <GrDocumentUser className="text-5xl text-blue-900"/>
                     <div>
                         <h1 className="text-3xl font-bold text-blue-950">Booking Management</h1>
-                        <h6 className="text-gray-500 text-lg font-bold">Manage your fleet efficiently</h6>
+                        <h6 className="text-gray-500 text-lg font-bold">Manage your Booking efficiently</h6>
                         {/*<h1 className="text-3xl font-bold text-blue-950">Car Management</h1>*/}
                     </div>
                 </div>
@@ -61,7 +61,7 @@ const BookingPage = () => {
                                 state={{selectedCar: car}}
                                 className="mt-4 block text-center  text-white font-bold bg-blue-950 rounded border-black hover:bg-transparent border-2 hover:border-black hover:text-black py-2 "
                             >
-                                Book Vehicle
+                                Booking Vehicle
                             </Link>
                         </div>
                     ))

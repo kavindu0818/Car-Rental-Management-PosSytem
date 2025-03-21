@@ -4,7 +4,8 @@ import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { deleteBooking, updateBooking } from "../store/slices/bookingSlice";
-import {saveHistory} from "../store/slices/HistorySlice.js"; // Import the action
+import {saveHistory} from "../store/slices/HistorySlice.js";
+import {toast} from "react-toastify"; // Import the action
 
 const CurruntBooking = () => {
     const location = useLocation();
@@ -65,8 +66,18 @@ const CurruntBooking = () => {
         onSubmit: async (values) => {
             try {
                 await dispatch(saveHistory(values)); // Dispatch the action to store booking in history
-                alert("Booking sent to history successfully!");
-                navigate("/booking-history");
+                // toast.success("✅!.", {
+                //     position: "top-right",
+                //     autoClose: 3000,
+                //     hideProgressBar: false,
+                //     closeOnClick: true,
+                //     pauseOnHover: true,
+                //     draggable: true,
+                //     progress: undefined,
+                //     theme: "colored",
+                //     style: { backgroundColor: "green", color: "#ffffff" }, // Dark Blue Background & White Text
+                // });
+                navigate('/instant-booking');
             } catch (error) {
                 console.error("Error sending booking to history:", error);
                 alert("Failed to send booking to history.");
@@ -79,6 +90,17 @@ const CurruntBooking = () => {
         if (payment > 0 && payment <= arrears) {
             setArrears((prevArrears) => prevArrears - payment);
             formik.setFieldValue("payArrears", "");
+            toast.success("✅ Arrears Amount Done", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                style: { backgroundColor: "green", color: "#ffffff" }, // Dark Blue Background & White Text
+            });
         }
     };
 
@@ -87,7 +109,17 @@ const CurruntBooking = () => {
             try {
                 await formikHistory.handleSubmit();
                 await dispatch(deleteBooking(bookingData.bookingId)).unwrap();
-                alert("Booking deleted successfully!");
+                toast.success(`✅ Booking Complete! Amount Paid`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    style: { backgroundColor: "#0b072b", color: "#ffffff" }, // Dark Blue Background & White Text
+                });
                 navigate("/instant-booking");
             } catch (error) {
                 console.error("Error deleting booking:", error);
@@ -195,8 +227,8 @@ const CurruntBooking = () => {
             </div>
 
             <div className="col-span-3 flex justify-end">
-                <button type="button" onClick={handleDeleteBooking} className="bg-blue-950 font-bold left-80 relative text-white px-6 py-2 rounded-md hover:bg-transparent hover:border-2 border-black hover:text-black rounded" >Submit
-                    Booking
+                <button type="button" onClick={handleDeleteBooking} className="bg-blue-950 font-bold left-80 relative text-white px-6 py-2 rounded-md hover:bg-transparent hover:border-2 border-black hover:text-black rounded" >
+                   Complete Booking
                 </button>
                 {/*<button type="button" onClick={handleDeleteBooking}*/}
                 {/*        className="ml-4 bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700">Delete Booking*/}

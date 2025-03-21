@@ -26,7 +26,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
     initialValues: initialValues || {
       carId: selectedCar?.number || '',
       carDetails: selectedCar
-          ? `${selectedCar.name} -${selectedCar.number}- ${selectedCar.model} (${selectedCar.year})`
+          ? `${selectedCar.name} -${selectedCar.number}`
           : '',
       customerId: '',
       startDate: format(new Date(), 'yyyy-MM-dd'),
@@ -66,7 +66,7 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (selectedCar && formik.values.startDate && formik.values.endDate) {
+    if (Array.isArray(bookings) && selectedCar && formik.values.startDate && formik.values.endDate) {
       const overlappingBookings = bookings.filter(booking =>
           booking.carId === selectedCar.number &&
           new Date(booking.startDate) <= new Date(formik.values.endDate) &&
@@ -74,10 +74,11 @@ const BookingForm = ({ onSubmit, initialValues = null }) => {
       );
       setCarBookings(overlappingBookings);
       if (overlappingBookings.length > 0) {
-        setShowModal(true); // Show modal when there are overlapping bookings
+        setShowModal(true);
       }
     }
   }, [formik.values.startDate, formik.values.endDate, bookings, selectedCar]);
+
 
   useEffect(() => {
     if (formik.values.carId && formik.values.startDate && formik.values.endDate) {

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser, getUser } from "../store/slices/UserSlice.js";
 import loginVideo from "../Assets/video/Car-Animation.mp4";
+import {toast} from "react-toastify";
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ username: "", password: "" });
@@ -24,13 +25,45 @@ const Login = () => {
             const resultAction = await dispatch(loginUser(credentials));
 
             if (loginUser.fulfilled.match(resultAction)) {
-                alert("Login successful!");
+                toast.success("✅ Login successful!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
                 await dispatch(getUser(credentials.username)); // Fetch user details after login
                 navigate("/dashboard");
             } else {
+                toast.error("❌ Login failed. Please check your credentials.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
                 setError("Login failed. Please check your credentials."); // Set error message
             }
         } catch (err) {
+            toast.error("⚠️ An unexpected error occurred. Please try again.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+
             setError("An unexpected error occurred. Please try again.");
         }
 
@@ -57,7 +90,7 @@ const Login = () => {
                     {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div>
-                            <label className="block text-gray-300 text-sm">Phone Number</label>
+                            <label className="block text-gray-300 text-sm">User Name</label>
                             <input
                                 type="text"
                                 name="username"

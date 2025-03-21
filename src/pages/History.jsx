@@ -67,7 +67,7 @@ const History = () => {
                     <BiHistory className="text-5xl text-blue-900"/>
                     <div>
                         <h1 className="text-3xl font-bold text-blue-950">Booking History</h1>
-                        <h6 className="text-gray-500 text-lg font-bold">Manage your fleet efficiently</h6>
+                        <h6 className="text-gray-500 text-lg font-bold">Manage your History efficiently</h6>
                         {/*<h1 className="text-3xl font-bold text-blue-950">Car Management</h1>*/}
                     </div>
                 </div>
@@ -97,13 +97,13 @@ const History = () => {
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle ID
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehicle
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center">Vehicle
                                 Details
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center">Customer
                                 ID
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase text-center">Total
                                 Amount
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -113,9 +113,9 @@ const History = () => {
                         {sortedBookings.map((booking) => (
                             <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-4 text-sm text-gray-500">{booking.carId || "N/A"}</td>
-                                <td className="px-6 py-4 text-sm font-medium text-gray-900">{booking.carDetails || "Unknown Car"}</td>
-                                <td className="px-6 py-4 text-sm text-gray-900">{booking.customerId || "Unknown Customer"}</td>
-                                <td className="px-6 py-4 text-sm text-gray-500">{booking.totalAmount || "N/A"}</td>
+                                <td className="px-6 py-4 text-sm font-medium text-gray-900 text-center">{booking.carDetails || "Unknown Car"}</td>
+                                <td className="px-6 py-4 text-sm text-gray-900 text-center">{booking.customerId || "Unknown Customer"}</td>
+                                <td className="px-6 py-4 text-sm text-gray-500 text-center">{booking.totalAmount || "N/A"}</td>
                                 <td className="px-6 py-4 text-sm font-medium">
                                     <button
                                         onClick={() => handleSetBookingView(booking)}
@@ -139,79 +139,71 @@ const History = () => {
                 className="modal"
                 overlayClassName="modal-overlay"
             >
-                <div className="fixed inset-0 flex items-center justify-center p-4">
+                <div className="fixed inset-0 flex items-center justify-center p-6 z-40 shadow-black">
                     <div
-                        className="bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg shadow-2xl max-w-2xl w-full p-6 relative">
+                        className="bg-white border-4 rounded-lg shadow-xl max-w-2xl w-full p-8 relative">
                         {/* Close Button */}
                         <button
                             onClick={closeModal}
-                            className="absolute top-4 right-4 text-gray-300 hover:text-white transition-colors"
+                            className="absolute top-4 text-black right-4  hover:text-black transition-colors"
                         >
-                            <FiX className="h-6 w-6"/>
+                            <FiX className="h-6 w-6" />
                         </button>
 
                         {/* Modal Header */}
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold relative left-56 text-white">Booking Details</h2>
+                            <h2 className="text-3xl font-semibold text-blue-950">Booking Details</h2>
                         </div>
 
                         {/* Modal Content */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Left Column */}
-                            <div className="space-y-4">
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Car ID:</strong> {selectedBooking?.carId}
+                            <div className="space-y-5">
+                                <p className="text-black">
+                                    <strong className="text-black">Car ID:</strong> {selectedBooking?.carId}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Car
-                                        Details:</strong> {selectedBooking?.carDetails}
+                                <p className="text-black">
+                                    <strong className="text-black ">Car Details:</strong> {selectedBooking?.carDetails}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Customer
-                                        ID:</strong> {selectedBooking?.customerId}
+                                <p className="text-black">
+                                    <strong className="text-black ">Customer ID:</strong> {selectedBooking?.customerId}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Start Date:</strong> {selectedBooking?.startDate}
+                                <p className="text-black">
+                                    <strong className="text-black">Start Date:</strong> {selectedBooking?.startDate}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">End Date:</strong> {selectedBooking?.endDate}
+                                <p className="text-black">
+                                    <strong className="text-black">End Date:</strong> {selectedBooking?.endDate}
                                 </p>
                             </div>
 
                             {/* Right Column */}
-                            <div className="space-y-4">
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Payment
-                                        Method:</strong> {selectedBooking?.paymentMethod}
+                            <div className="space-y-5">
+                                <p className="text-black">
+                                    <strong className="text-black">Payment Method:</strong> {selectedBooking?.paymentMethod}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Payment
-                                        Status:</strong> {selectedBooking?.paymentStatus}
+                                <p className="text-black">
+                                    <strong className="text-black">Payment Status:</strong> {selectedBooking?.paymentStatus}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Advance
-                                        Payment:</strong> {selectedBooking?.payAdvance}
+                                <p className="text-black">
+                                    <strong className="text-black">Advance Payment:</strong> {selectedBooking?.payAdvance}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Total
-                                        Amount:</strong> {selectedBooking?.totalAmount}
+                                <p className="text-black">
+                                    <strong className="text-black">Total Amount:</strong> {selectedBooking?.totalAmount}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Price Per
-                                        Day:</strong> {selectedBooking?.pricePerDay}
+                                <p className="text-black">
+                                    <strong className="text-black">Price Per Day:</strong> {selectedBooking?.pricePerDay}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Car
-                                        Issue:</strong> {selectedBooking?.carIssue ? "Yes" : "No"}
+                                <p className="text-black">
+                                    <strong className="text-black">Car Issue:</strong> {selectedBooking?.carIssue ? "Yes" : "No"}
                                 </p>
-                                <p className="text-gray-200">
-                                    <strong className="text-gray-400">Arrears:</strong> {selectedBooking?.payArrears}
-                                </p>
+                                {/*<p className="text-black">*/}
+                                {/*    <strong className="text-black">Arrears:</strong> {selectedBooking?.payArrears}*/}
+                                {/*</p>*/}
                             </div>
                         </div>
 
                         {/* Footer */}
-                        <div className="mt-6 border-t border-gray-500 pt-4">
+                        <div className="mt-6 border-t border-indigo-600 pt-4">
                             <p className="text-sm text-gray-300">
                                 For more details, contact support.
                             </p>
@@ -219,6 +211,8 @@ const History = () => {
                     </div>
                 </div>
             </Modal>
+
+
         </div>
     );
 };

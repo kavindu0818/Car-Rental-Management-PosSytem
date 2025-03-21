@@ -10,9 +10,11 @@ import {getHistory} from "../store/slices/HistorySlice.js";
 import {getCars} from "../store/slices/carsSlice.js";
 import {getCustomers} from "../store/slices/customersSlice.js";
 import {getBookings} from "../store/slices/bookingSlice.js";
-import {BiHistory} from "react-icons/bi";
+import {BiHistory, BiMoney} from "react-icons/bi";
 import {AiFillDashboard} from "react-icons/ai";
 import {number} from "yup";
+import {PiCar} from "react-icons/pi";
+import {HiCurrencyRupee} from "react-icons/hi";
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -48,7 +50,7 @@ const Dashboard = () => {
     //   // dispatch(getCars());
     //   // dispatch(getCustomers());
     //   dispatch(getBookings());
-    // }, [bookings]);
+    // }, [dispatch]);
 
     // Get recent bookings
     const recentBookings = [...bookings]
@@ -143,7 +145,7 @@ const Dashboard = () => {
           <StatCard
               title="Total Cars"
               value={stats.totalCars}
-              icon={FiTruck}
+              icon={PiCar}
               change="5%"
               changeType="increase"
           />
@@ -156,8 +158,8 @@ const Dashboard = () => {
           />
           <StatCard
               title="Total Revenue"
-              value={`$${stats.totalRevenue}`}
-              icon={FiDollarSign}
+              value={`Rs ${stats.totalRevenue}`}
+              icon={BiMoney}
               change="8%"
               changeType="increase"
           />
@@ -197,7 +199,7 @@ const Dashboard = () => {
                         </div>
                         <div className="ml-4 flex-1">
                           <h3 className="text-sm font-medium text-gray-900">{cars.name} {cars.model}</h3>
-                          <p className="text-sm text-gray-500">{cars.year} • ${cars.price}/day</p>
+                          <p className="text-sm text-gray-500">{cars.year} • Rs{cars.price}/day</p>
                         </div>
                         <div
                             className="flex-shrink-0 bg-primary-100 text-primary-800 text-xs font-medium px-2 py-1 rounded-full">
@@ -220,7 +222,7 @@ const Dashboard = () => {
                 <thead className="bg-gray-50">
                 <tr>
                   <th scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      className="px-6 py-3 text-left text-xs font-medium text-center text-gray-500 uppercase tracking-wider">
                     Customer
                   </th>
                   <th scope="col"
@@ -228,7 +230,7 @@ const Dashboard = () => {
                     Car
                   </th>
                   <th scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                     Dates
                   </th>
                   <th scope="col"
@@ -255,17 +257,17 @@ const Dashboard = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {car ? `${car.name} ${car.model}` : 'Unknown Car'}
+                            {car ? `${car.name}` : 'Unknown Car'}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
                           <div className="text-sm text-gray-900">
                             {booking.startDate} to {booking.endDate}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            ${booking.totalAmount}
+                            Rs{booking.totalAmount}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

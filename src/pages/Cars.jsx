@@ -5,6 +5,7 @@ import { FiPlus, FiSearch, FiFilter } from "react-icons/fi";
 import CarCard from "../components/CarCard";
 import { getCars, deleteCar } from "../store/slices/carsSlice";
 import { PiCar } from "react-icons/pi";
+import {toast} from "react-toastify";
 
 const Cars = () => {
     const dispatch = useDispatch();
@@ -17,6 +18,19 @@ const Cars = () => {
 
     const handleDelete = (id) => {
         dispatch(deleteCar(id));
+        dispatch(getCars());
+        toast.success("✅ Car Removed.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            style: { backgroundColor: "red", color: "#ffffff" }, // Dark Blue Background & White Text
+        });
+
     };
 
     const filteredCars = Array.isArray(cars) ? cars.filter((car) =>
@@ -32,7 +46,7 @@ const Cars = () => {
                         <PiCar className="text-5xl text-blue-900" />
                         <div>
                             <h1 className="text-3xl font-bold text-blue-950">Car Management</h1>
-                            <h6 className="text-gray-500 text-lg font-bold">Manage your fleet efficiently</h6>
+                            <h6 className="text-gray-500 text-lg font-bold">Manage your Cars efficiently</h6>
                             {/*<h1 className="text-3xl font-bold text-blue-950">Car Management</h1>*/}
                         </div>
                     </div>

@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom';
 import { FiPlus, FiSearch, FiEdit, FiTrash2 } from 'react-icons/fi';
 import { deleteCustomer, getCustomers, saveCustomer, updateCustomer } from '../store/slices/customersSlice';
 import CustomerForm from '../components/CustomerForm';
-import CustomerUpdateModal from '../pages/CustomerUpdateModal.jsx'; // ✅ Ensure this is imported
+import CustomerUpdateModal from '../pages/CustomerUpdateModal.jsx';
 import { BsFilePerson } from "react-icons/bs";
+import {toast} from "react-toastify";
 
 const Customers = () => {
   const dispatch = useDispatch();
-  const { customers } = useSelector(state => state.customers);
-  const { bookings = [] } = useSelector(state => state.bookings);
+  const customers = useSelector(state => state.customers?.customers || []); // ✅ Ensures an array
+  const bookings = useSelector(state => state.bookings?.bookings || []); // ✅ Ensures an array
 
   useEffect(() => {
     dispatch(getCustomers());
@@ -19,7 +20,7 @@ const Customers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddCustomer, setShowAddCustomer] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [showUpdateModal, setShowUpdateModal] = useState(false); // ✅ State for Update Modal
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const handleDeleteCustomer = (id) => {
     const customerBookings = bookings.filter(booking => booking.customerId === id);
@@ -29,24 +30,58 @@ const Customers = () => {
     }
 
     if (window.confirm('Are you sure you want to delete this customer?')) {
+      console.log("customer Number",id)
       dispatch(deleteCustomer(id));
+      toast.success("✅ Customer Remove Successfully!.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: { backgroundColor: "darkred", color: "#ffffff" }, // Dark Blue Background & White Text
+      });
       setShowAddCustomer(false);
     }
   };
 
   const handleAddCustomer = (values) => {
     dispatch(saveCustomer(values));
+    toast.success("✅ Customer Add Successfully!.", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      style: { backgroundColor: "darkblue", color: "#ffffff" }, // Dark Blue Background & White Text
+    });
     setShowAddCustomer(false);
   };
 
   const handleEditCustomer = (customer) => {
-    setSelectedCustomer(customer); // ✅ Set selected customer
-    setShowUpdateModal(true); // ✅ Show modal
+    setSelectedCustomer(customer);
+    setShowUpdateModal(true);
   };
 
   const handleUpdateCustomer = (updatedCustomer) => {
-    dispatch(updateCustomer(updatedCustomer)); // ✅ Dispatch update action
-    setShowUpdateModal(false); // ✅ Close modal
+    dispatch(updateCustomer(updatedCustomer));
+    toast.success("✅ Customer Update Successfully!.", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      style: { backgroundColor: "darkgreen", color: "#ffffff" }, // Dark Blue Background & White Text
+    });
+    setShowUpdateModal(false);
   };
 
   const filteredCustomers = customers.filter(
@@ -63,7 +98,7 @@ const Customers = () => {
             <BsFilePerson className="text-5xl text-blue-900"/>
             <div>
               <h1 className="text-3xl font-bold text-blue-950">Customer Management</h1>
-              <h6 className="text-gray-500 text-lg font-bold">Manage your fleet efficiently</h6>
+              <h6 className="text-gray-500 text-lg font-bold">Manage your Customer efficiently</h6>
             </div>
           </div>
           <button
@@ -78,10 +113,7 @@ const Customers = () => {
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-medium text-gray-900">Add New Customer</h2>
-                <button
-                    onClick={() => setShowAddCustomer(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                >
+                <button onClick={() => setShowAddCustomer(false)} className="text-gray-500 hover:text-gray-700">
                   Cancel
                 </button>
               </div>
@@ -107,10 +139,7 @@ const Customers = () => {
         {filteredCustomers.length === 0 ? (
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
               <p className="text-gray-500">No customers found matching your criteria.</p>
-              <button
-                  onClick={() => setShowAddCustomer(true)}
-                  className="mt-4 bg-blue-950 text-white px-6 py-2 rounded-lg"
-              >
+              <button onClick={() => setShowAddCustomer(true)} className="mt-4 bg-blue-950 text-white px-6 py-2 rounded-lg">
                 Add a new customer
               </button>
             </div>
@@ -119,32 +148,28 @@ const Customers = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Contact</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">License</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Address</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Actions</th>
                 </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                {filteredCustomers.map(customer => (
-                    <tr key={customer.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">{customer.name}</td>
-                      <div className="text-sm text-gray-500">Since {customer.createdAt}</div>
-                      <td className="px-6 py-4 whitespace-nowrap">{customer.phone}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{customer.license}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{customer.address}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                            onClick={() => handleEditCustomer(customer)}
-                            className="text-blue-600 hover:text-blue-900 mr-4"
-                        >
+                {filteredCustomers.map((customer) => (
+                    <tr key={customer.id || customer.phone}> {/* ✅ Ensuring unique key */}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">{customer.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <div className="text-sm font-medium text-gray-900 text-center">{customer.phone}</div>
+                        <div className="text-sm text-gray-500 text-center">{customer.email}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">{customer.license}</td>
+                      <td className="px-2 py-4 whitespace-nowrap text-center">{customer.address}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                        <button onClick={() => handleEditCustomer(customer)} className="text-blue-600 hover:text-blue-900 mr-4">
                           <FiEdit/>
                         </button>
-                        <button
-                            onClick={() => handleDeleteCustomer(customer.id)}
-                            className="text-red-600 hover:text-red-900"
-                        >
+                        <button onClick={() => handleDeleteCustomer(customer.phone)} className="text-red-600 hover:text-red-900">
                           <FiTrash2/>
                         </button>
                       </td>
@@ -155,12 +180,12 @@ const Customers = () => {
             </div>
         )}
 
-        {/* ✅ Customer Update Modal */}
         {showUpdateModal && selectedCustomer && (
             <CustomerUpdateModal
                 customer={selectedCustomer}
-                onClose={() => setShowUpdateModal(false)}
                 onUpdate={handleUpdateCustomer}
+                onClose={() => setShowUpdateModal(false)}
+
             />
         )}
       </div>

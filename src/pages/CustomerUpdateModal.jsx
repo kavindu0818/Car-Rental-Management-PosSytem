@@ -48,9 +48,9 @@ const CustomerUpdateModal = ({ customer, onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg shadow-md p-6 w-80 max-h-[85vh] overflow-auto">
-                <div className="flex justify-between items-center mb-3">
-                    <h2 className="text-lg font-semibold text-gray-900">Update Customer</h2>
+            <div className="bg-white rounded-lg shadow-md p-6 w-96 max-h-[95vh] overflow-auto">
+                <div className="flex justify-between items-center  mb-3 ">
+                    <h2 className="text-lg font-semibold text-blue-950">Update Customer</h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-sm">
                         ✕
                     </button>
@@ -120,7 +120,7 @@ const CustomerUpdateModal = ({ customer, onClose }) => {
                         </button>
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-700"
+                            className="bg-blue-950  font-bold text-white px-5 py-2 rounded-lg text-sm hover:bg-transparent border-2 border-black hover:text-black font-bold"
                         >
                             Update
                         </button>
