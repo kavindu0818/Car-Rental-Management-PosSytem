@@ -24,16 +24,12 @@ function App() {
         <Router>
             <ToastContainer />
             <Routes>
-                {/* Default route for intro page */}
-                <Route index element={<IntroPage />} />
 
-                {/* Routes for Login/SignUp */}
+                <Route index element={<IntroPage />} />
                 <Route path="/signUp" element={<SignUp />} />
                 <Route path="login" element={<LoginPage />} />
 
-                {/* Protected routes inside Layout */}
                 <Route path="/" element={<Layout />}>
-                    {/*<Route index element={<Navigate to="/dashboard" />} />*/}
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="cars" element={<Cars />} />
                     <Route path="cars/add" element={<AddCar />} />

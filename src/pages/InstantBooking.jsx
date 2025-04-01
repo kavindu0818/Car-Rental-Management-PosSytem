@@ -53,7 +53,7 @@ const InstantBooking = () => {
   console.log(bookings)
   return (
       <div className="p-4">
-        <div className="flex justify-between items-center mb-6 border-b pb-4">
+        <div className="flex justify-between items-center mb-6 border-b pb-4 ">
           <div className="flex items-center gap-4">
             <MdRecentActors className="text-5xl text-blue-900"/>
             <div>
@@ -64,9 +64,9 @@ const InstantBooking = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none pb-5">
               <FiSearch className="h-5 w-5 text-gray-400"/>
             </div>
             <input
@@ -84,7 +84,7 @@ const InstantBooking = () => {
               <p className="text-gray-500">No bookings found matching your criteria.</p>
             </div>
         ) : (
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden pb-4">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">

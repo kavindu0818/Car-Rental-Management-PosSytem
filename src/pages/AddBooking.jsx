@@ -14,7 +14,7 @@ const AddBooking = () => {
     const handleSubmit = (values) => {
         console.log("booking eka hari bn 12345",values);
         dispatch(addBooking(values));
-        toast.success("✅ Booking Successfully.", {
+        toast.success("✅ Booking Successful!", {
             position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,

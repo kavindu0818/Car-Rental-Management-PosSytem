@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FiUser } from "react-icons/fi";
 import user from"../Assets/userImage.jpg"
+import {BiBell} from "react-icons/bi";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.user); // Get user info from Redux
@@ -37,6 +38,23 @@ const Header = () => {
                   className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
               >
+                <div className="relative flex items-center space-x-4">
+                  {/* Notification Bell */}
+                  <button className="relative p-2 rounded-full bg-gray-200">
+                    <BiBell className="w-6 h-6 text-gray-600"/>
+                    <span className="absolute top-0 right-0 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+                    {/* Red dot for notifications */}
+                  </button>
+
+                  {/* User Profile Button */}
+                  <button
+                      type="button"
+                      className="relative flex items-center text-sm rounded-full focus:outline-none"
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  >
+                  </button>
+                </div>
+
                 <div
                     className="h-10 w-10 rounded-full bg-blue-950 flex items-center justify-center text-white overflow-hidden">
                   {user ? (

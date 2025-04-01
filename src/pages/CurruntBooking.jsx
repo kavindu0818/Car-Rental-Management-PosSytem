@@ -109,7 +109,7 @@ const CurruntBooking = () => {
             try {
                 await formikHistory.handleSubmit();
                 await dispatch(deleteBooking(bookingData.bookingId)).unwrap();
-                toast.success(`✅ Booking Complete! Amount Paid`, {
+                toast.success(`✅ Booking Complete!`, {
                     position: "top-right",
                     autoClose: 3000,
                     hideProgressBar: false,

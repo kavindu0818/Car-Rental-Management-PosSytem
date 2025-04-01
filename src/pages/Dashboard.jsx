@@ -38,12 +38,12 @@ const Dashboard = () => {
 
     // Generate monthly revenue data (sample data for demonstration)
     const monthlyRevenue = [
-      { month: 'Jan', revenue: 1200 },
+      { month: 'Jan', revenue: 0 },
       { month: 'Feb', revenue: 1900 },
       { month: 'Mar', revenue: 1500 },
-      { month: 'Apr', revenue: 2200 },
-      { month: 'May', revenue: 2800 },
-      { month: 'Jun', revenue: 2100 },
+      { month: 'Apr', revenue: 0 },
+      { month: 'May', revenue: 0 },
+      { month: 'Jun', revenue: 0 },
     ];
 
     // useEffect(() => {
